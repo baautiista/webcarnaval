@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agrupacion — Archivo del Carnaval del Campo de Gibraltar</title>
+  <meta name="description" content="Ficha detallada de agrupacion del Carnaval del Campo de Gibraltar.">
+  <meta property="og:type" content="article">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* Orbs for detail hero */
+    .detail-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+    }
+    .detail-orb-1 {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(57,134,255,0.18) 0%, transparent 70%);
+      top: -100px; left: -100px;
+    }
+    .detail-orb-2 {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(249,22,105,0.12) 0%, transparent 70%);
+      top: 0; right: 0;
+    }
+    .detail-orb-3 {
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(252,189,13,0.08) 0%, transparent 70%);
+      bottom: -50px; left: 40%;
+    }
+    /* Gallery grid inside detail page */
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+    }
+    .photo-grid-item {
+      border-radius: 10px;
+      overflow: hidden;
+      aspect-ratio: 4/3;
+      background: var(--gray1);
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+    }
+    .photo-grid-item:hover { transform: scale(1.04); box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+    .photo-grid-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .photo-grid-item .photo-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.35);
+      opacity: 0;
+      transition: var(--transition);
+      display: flex; align-items: center; justify-content: center;
+      color: white;
+    }
+    .photo-grid-item:hover .photo-overlay { opacity: 1; }
+    /* Poster grid */
+    .poster-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 16px;
+    }
+    .poster-item {
+      border-radius: 10px;
+      overflow: hidden;
+      aspect-ratio: 2/3;
+      background: var(--gray1);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .poster-item:hover { transform: scale(1.04); box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+    .poster-item img { width: 100%; height: 100%; object-fit: cover; }
+    /* Not found state */
+    .not-found-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 120px 24px;
+      text-align: center;
+      gap: 20px;
+    }
+    .not-found-icon {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      background: rgba(249,22,105,0.1);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--pink);
+    }
+    /* Sticky sidebar on desktop */
+    @media (min-width: 901px) {
+      .detail-sidebar { position: sticky; top: 88px; }
+    }
+    /* Loading skeleton */
+    @keyframes skeleton-pulse {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 0.8; }
+    }
+    .skeleton {
+      background: var(--gray1);
+      border-radius: 8px;
+      animation: skeleton-pulse 1.5s ease-in-out infinite;
+    }
+    .skeleton-title { height: 64px; width: 80%; margin-bottom: 20px; }
+    .skeleton-meta { height: 20px; width: 50%; margin-bottom: 40px; }
+    .skeleton-text { height: 16px; width: 100%; margin-bottom: 12px; }
+    .skeleton-text:last-child { width: 60%; }
+  </style>
+</head>
+<body>
+
+<div id="navbar-placeholder"></div>
+
+<!-- DETAIL HERO — populated by JS -->
+<section class="detail-hero" id="detail-hero">
+  <div class="detail-hero-orbs">
+    <div class="detail-orb detail-orb-1"></div>
+    <div class="detail-orb detail-orb-2"></div>
+    <div class="detail-orb detail-orb-3"></div>
+  </div>
+  <div class="container">
+    <!-- Loading skeleton -->
+    <div id="hero-loading" class="detail-header">
+      <div class="skeleton skeleton-title"></div>
+      <div class="skeleton skeleton-meta"></div>
+    </div>
+    <!-- Real content injected here -->
+    <div id="hero-content" class="detail-header" style="display:none"></div>
+  </div>
+</section>
+
+<!-- DETAIL BODY — populated by JS -->
+<section class="section section-dark" id="detail-body-section" style="padding-top:0">
+  <div class="container">
+    <div id="detail-body">
+      <!-- Loading skeleton for body -->
+      <div id="body-loading" style="padding:48px 0">
+        <div class="skeleton skeleton-text"></div>
+        <div class="skeleton skeleton-text"></div>
+        <div class="skeleton skeleton-text"></div>
+        <div class="skeleton skeleton-text"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div id="footer-placeholder"></div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  /* ---- Utils ---- */
+  function esc(str) {
+    return String(str || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function sectionTitle(label) {
+    return `<h2 class="detail-section-title">${label}</h2>`;
+  }
+
+  /* ---- Render hero ---- */
+  function renderHero(ag) {
+    const badgeStyle = modalidadBadgeStyle(ag.modalidad);
+    return `
+      <nav class="page-breadcrumb" aria-label="Ruta de navegacion">
+        <a href="index.html">Inicio</a>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+        <a href="agrupaciones.html">Agrupaciones</a>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+        <span>${esc(ag.nombre)}</span>
+      </nav>
+      ${ag.modalidad ? `<div class="detail-modality-badge" style="${badgeStyle}">${esc(ag.modalidad)}</div>` : ''}
+      <h1 class="detail-title">${esc(ag.nombre)}</h1>
+      <div class="detail-meta-row">
+        ${ag.anyo ? `
+          <div class="detail-meta-item">
+            ${iconCalendar()}
+            <span><strong>${esc(ag.anyo)}</strong></span>
+          </div>` : ''}
+        ${ag.municipio ? `
+          <div class="detail-meta-item">
+            ${iconPin()}
+            <a href="municipio.html?slug=${esc(ag.municipio.toLowerCase().replace(/\s+/g,'-'))}"
+               style="color:var(--gray4);text-decoration:none;transition:var(--transition)"
+               onmouseover="this.style.color='white'"
+               onmouseout="this.style.color='var(--gray4)'">
+              <strong>${esc(ag.municipio)}</strong>
+            </a>
+          </div>` : ''}
+        ${ag.modalidad ? `
+          <div class="detail-meta-item">
+            ${iconPen()}
+            <span><strong>${esc(ag.modalidad)}</strong></span>
+          </div>` : ''}
+        ${ag.premios.length ? `
+          <div class="detail-meta-item" style="color:var(--yellow)">
+            ${iconTrophy()}
+            <span><strong>${ag.premios.length} premio${ag.premios.length !== 1 ? 's' : ''}</strong></span>
+          </div>` : ''}
+      </div>
+    `;
+  }
+
+  /* ---- Render description section ---- */
+  function renderDescripcion(ag) {
+    if (!ag.descripcion) return '';
+    const paragraphs = ag.descripcion
+      .split(/\n+/)
+      .filter(p => p.trim())
+      .map(p => `<p>${esc(p)}</p>`)
+      .join('');
+    return `
+      <div class="detail-section">
+        ${sectionTitle('Historia y descripcion')}
+        <div class="detail-text">${paragraphs}</div>
+      </div>`;
+  }
+
+  /* ---- Medal helpers ---- */
+  function medalSvg(rank) {
+    const colors = { 1: '#FFD700', 2: '#C0C0C0', 3: '#CD7F32' };
+    const fill = colors[rank] || '#9ca3af';
+    return `<svg width="28" height="28" viewBox="0 0 24 24" fill="${fill}" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="14" r="7"/><path d="M8 6L6 2h12l-2 4" fill="${fill}" opacity="0.6"/><text x="12" y="18" text-anchor="middle" font-size="8" font-weight="bold" fill="white" font-family="sans-serif">${rank || ''}</text></svg>`;
+  }
+  function premioRank(idx) { return idx + 1; }
+
+  /* ---- Render premios section ---- */
+  function renderPremios(ag) {
+    if (!ag.premios.length) return '';
+    const medalColors = ['#FFD700','#C0C0C0','#CD7F32'];
+    const items = ag.premios.map((p, i) => {
+      const color = medalColors[i] || '#9ca3af';
+      const glow = i < 3 ? `box-shadow:0 2px 12px ${color}40;` : '';
+      return `
+        <div class="prize-medal-item" style="display:flex;align-items:center;gap:14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px 18px;margin-bottom:10px;${glow}">
+          <div style="flex-shrink:0;width:36px;height:36px;border-radius:50%;background:${color}22;border:2px solid ${color}55;display:flex;align-items:center;justify-content:center;font-size:16px">${i===0?'🥇':i===1?'🥈':i===2?'🥉':'🏅'}</div>
+          <div>
+            <div style="font-family:var(--font-sans);font-size:13px;font-weight:700;color:${color};letter-spacing:0.05em;text-transform:uppercase;margin-bottom:2px">${i===0?'1.er Premio':i===1?'2.º Premio':i===2?'3.er Premio':'Premio'}</div>
+            <div style="font-family:var(--font-body);font-size:16px;color:var(--gray4)">${esc(p)}</div>
+          </div>
+        </div>`;
+    }).join('');
+    return `
+      <div class="detail-section">
+        ${sectionTitle('Premios y Palmarés')}
+        <div class="prizes-medals">${items}</div>
+      </div>`;
+  }
+
+  /* ---- Render rating section ---- */
+  function renderRating(ag, valoraciones) {
+    const avg = valoraciones.length
+      ? (valoraciones.reduce((s, v) => s + v.puntuacion, 0) / valoraciones.length).toFixed(1)
+      : null;
+    const count = valoraciones.length;
+    const stars = avg ? Math.round(parseFloat(avg)) : 0;
+    const starsHtml = Array.from({length:10}, (_,i) => {
+      const filled = i < stars;
+      return `<span style="color:${filled?'#fcbd0d':'rgba(255,255,255,0.15)'};font-size:18px;cursor:pointer;transition:color .15s" class="rating-star" data-val="${i+1}">★</span>`;
+    }).join('');
+    return `
+      <div class="detail-section" id="rating-section">
+        ${sectionTitle('Valoración de los usuarios')}
+        <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;margin-bottom:24px">
+          ${avg ? `
+            <div style="text-align:center">
+              <div style="font-family:var(--font-display);font-size:56px;font-weight:900;color:#fcbd0d;line-height:1">${avg}</div>
+              <div style="font-family:var(--font-sans);font-size:12px;color:var(--gray3);margin-top:4px">${count} valoraci${count!==1?'ones':'ón'}</div>
+            </div>` : `<div style="font-family:var(--font-sans);font-size:14px;color:var(--gray3)">Sin valoraciones todavía.</div>`}
+          <div>
+            <div style="font-family:var(--font-sans);font-size:12px;color:var(--gray3);margin-bottom:8px;letter-spacing:0.08em;text-transform:uppercase;font-weight:700">Tu valoración</div>
+            <div id="rating-stars" style="display:flex;gap:4px">${starsHtml}</div>
+            <div id="rating-feedback" style="font-family:var(--font-sans);font-size:13px;color:var(--gray3);margin-top:8px;min-height:18px"></div>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  /* ---- Render letras button ---- */
+  function renderLetrasBtn(ag) {
+    return `
+      <div class="detail-section">
+        ${sectionTitle('Letras')}
+        <p style="font-family:var(--font-body);font-size:17px;color:var(--text-secondary);margin-bottom:20px;line-height:1.7">
+          Accede al cancionero completo de esta agrupación: presentación, pasodobles, cuplés y más.
+        </p>
+        <a href="letras.html?id=${esc(ag.id)}&nombre=${encodeURIComponent(ag.nombre)}" class="btn btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          Ver letras de ${esc(ag.nombre)}
+        </a>
+      </div>`;
+  }
+
+  /* ---- Render fototeca section (CSV + Supabase fotos) ---- */
+  function renderFototeca(ag, supaFotos) {
+    // Merge CSV URLs + Supabase foto objects; deduplicate by URL
+    const seen = new Set();
+    const allUrls = [];
+    (supaFotos || []).forEach(f => {
+      if (f.url && !seen.has(f.url)) { seen.add(f.url); allUrls.push(f.url); }
+    });
+    (ag.fotografias || []).forEach(url => {
+      if (url && !seen.has(url)) { seen.add(url); allUrls.push(url); }
+    });
+    if (!allUrls.length) return '';
+    const PREVIEW = 8;
+    const shown = allUrls.slice(0, PREVIEW);
+    const items = shown.map((url, i) => `
+      <div class="photo-grid-item"
+           data-lightbox="${esc(url)}"
+           data-caption="${esc(ag.nombre)} — ${esc(ag.anyo)}"
+           role="button" tabindex="0"
+           aria-label="Ver foto ${i + 1}"
+           onkeydown="if(event.key==='Enter'||event.key===' ')this.click()">
+        <img src="${esc(url)}" alt="${esc(ag.nombre)} — foto ${i + 1}" loading="lazy"
+             onerror="this.parentNode.style.background='var(--gray1)';this.remove()">
+        <div class="photo-overlay">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="28" height="28"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6"/></svg>
+        </div>
+      </div>`
+    ).join('');
+    const moreBtn = allUrls.length > PREVIEW
+      ? `<div style="text-align:center;margin-top:1rem">
+           <a href="fototeca.html?agrupacion=${esc(ag.id)}" class="btn btn-outline">
+             Ver las ${allUrls.length} fotografías
+           </a>
+         </div>`
+      : `<div style="text-align:center;margin-top:1rem">
+           <a href="fototeca.html?agrupacion=${esc(ag.id)}" class="btn btn-outline">
+             Ver en fototeca
+           </a>
+         </div>`;
+    return `
+      <div class="detail-section">
+        ${sectionTitle('Fototeca')}
+        <div class="photo-grid">${items}</div>
+        ${moreBtn}
+      </div>`;
+  }
+
+  /* ---- Render videos section ---- */
+  function renderVideos(ag) {
+    if (!ag.videos.length) return '';
+    const items = ag.videos.map((url, i) => {
+      const thumb = getVideoThumb(url);
+      const embedId = `video-embed-${ag.id}-${i}`;
+      if (thumb) {
+        // Lazy embed: show thumbnail, click to load iframe
+        return `
+          <div class="video-card">
+            <div class="video-thumb" id="${embedId}" style="cursor:pointer"
+                 onclick="this.innerHTML=renderVideoEmbed('${esc(url)}')">
+              <img src="${esc(thumb)}" alt="Video ${i + 1}" loading="lazy"
+                   onerror="this.style.display='none'">
+              <div class="video-play-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z"/></svg>
+              </div>
+            </div>
+            <div class="video-info">
+              <div class="video-title">${esc(ag.nombre)}</div>
+              <div class="video-meta">${iconCalendar()} ${esc(ag.anyo)} &middot; ${esc(ag.municipio)}</div>
+            </div>
+          </div>`;
+      }
+      // No thumbnail: render embed directly
+      return `
+        <div class="video-card">
+          <div class="video-thumb">${renderVideoEmbed(url)}</div>
+          <div class="video-info">
+            <div class="video-title">${esc(ag.nombre)}</div>
+            <div class="video-meta">${iconCalendar()} ${esc(ag.anyo)} &middot; ${esc(ag.municipio)}</div>
+          </div>
+        </div>`;
+    }).join('');
+    return `
+      <div class="detail-section">
+        ${sectionTitle('Videos')}
+        <div class="video-grid">${items}</div>
+      </div>`;
+  }
+
+  /* ---- Render carteles section ---- */
+  function renderCarteles(ag) {
+    if (!ag.carteles.length) return '';
+    const items = ag.carteles.map((url, i) => `
+      <div class="poster-item"
+           data-lightbox="${esc(url)}"
+           data-caption="Cartel — ${esc(ag.nombre)} ${esc(ag.anyo)}"
+           role="button" tabindex="0"
+           aria-label="Ver cartel ${i + 1}"
+           onkeydown="if(event.key==='Enter'||event.key===' ')this.click()">
+        <img src="${esc(url)}" alt="Cartel ${esc(ag.nombre)}" loading="lazy"
+             onerror="this.parentNode.style.background='var(--gray1)';this.remove()">
+      </div>`
+    ).join('');
+    return `
+      <div class="detail-section">
+        ${sectionTitle('Carteles')}
+        <div class="poster-grid">${items}</div>
+      </div>`;
+  }
+
+  /* ---- Render relacionadas section ---- */
+  async function renderRelacionadas(ag) {
+    const yearMin = ag.anyoNum - 2;
+    const yearMax = ag.anyoNum + 2;
+    const db = await DataAPI.getAll();
+    const relacionadas = db.agrupaciones.filter(a =>
+      a.id !== ag.id &&
+      a.municipio === ag.municipio &&
+      a.anyoNum >= yearMin &&
+      a.anyoNum <= yearMax
+    ).slice(0, 6);
+
+    if (!relacionadas.length) return '';
+
+    return `
+      <div class="detail-section">
+        ${sectionTitle('Agrupaciones relacionadas')}
+        <div class="cards-grid" style="grid-template-columns:repeat(auto-fill,minmax(280px,1fr))">
+          ${relacionadas.map(r => renderAgrupacionCard(r)).join('')}
+        </div>
+      </div>`;
+  }
+
+  /* ---- Render sidebar ---- */
+  function renderSidebar(ag, aliasMap) {
+    // Autores card
+    let autoresCard = '';
+    if (ag.autores.length) {
+      const items = ag.autores.map(nombre => {
+        const slug = (typeof resolveAutorSlug === 'function' && aliasMap)
+          ? resolveAutorSlug(nombre, aliasMap)
+          : slugify(nombre);
+        return `
+          <div class="sidebar-person" onclick="location.href='autor.html?slug=${esc(slug)}'"
+               role="button" tabindex="0"
+               onkeydown="if(event.key==='Enter')location.href='autor.html?slug=${esc(slug)}'">
+            <div class="sidebar-person-avatar">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z"/></svg>
+            </div>
+            <div>
+              <div class="sidebar-person-name">${esc(nombre)}</div>
+              <div style="font-family:var(--font-sans);font-size:11px;color:var(--gray3)">Autor/a</div>
+            </div>
+            <div style="margin-left:auto;color:var(--gray3)">${iconChevronRight()}</div>
+          </div>`;
+      }).join('');
+      autoresCard = `
+        <div class="sidebar-card">
+          <div class="sidebar-card-title">${iconPen()} Autores</div>
+          <div class="sidebar-list">${items}</div>
+        </div>`;
+    }
+
+    // Componentes card
+    let componentesCard = '';
+    if (ag.componentes.length) {
+      const shown = ag.componentes.slice(0, 10);
+      const extra = ag.componentes.length - shown.length;
+      const items = shown.map(nombre => {
+        const slug = slugify(nombre);
+        return `
+          <div class="sidebar-person" onclick="location.href='persona.html?slug=${esc(slug)}&tipo=componente'"
+               role="button" tabindex="0"
+               onkeydown="if(event.key==='Enter')location.href='persona.html?slug=${esc(slug)}&tipo=componente'">
+            <div class="sidebar-person-avatar">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+            </div>
+            <div>
+              <div class="sidebar-person-name">${esc(nombre)}</div>
+              <div style="font-family:var(--font-sans);font-size:11px;color:var(--gray3)">Componente</div>
+            </div>
+            <div style="margin-left:auto;color:var(--gray3)">${iconChevronRight()}</div>
+          </div>`;
+      }).join('');
+      const extraHtml = extra > 0
+        ? `<div style="font-family:var(--font-sans);font-size:12px;color:var(--gray3);text-align:center;padding:8px 0">y ${extra} componente${extra !== 1 ? 's' : ''} mas</div>`
+        : '';
+      componentesCard = `
+        <div class="sidebar-card">
+          <div class="sidebar-card-title">${iconUser()} Componentes</div>
+          <div class="sidebar-list">${items}${extraHtml}</div>
+        </div>`;
+    }
+
+    // Info card
+    const infoRows = [
+      ag.anyo      ? `<div style="display:flex;gap:10px;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05)"><span style="color:var(--gray3);font-size:13px;font-family:var(--font-sans)">${iconCalendar()} Ano</span><strong style="font-family:var(--font-sans);font-size:13px">${esc(ag.anyo)}</strong></div>` : '',
+      ag.municipio ? `<div style="display:flex;gap:10px;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05)"><span style="color:var(--gray3);font-size:13px;font-family:var(--font-sans)">${iconPin()} Municipio</span><strong style="font-family:var(--font-sans);font-size:13px">${esc(ag.municipio)}</strong></div>` : '',
+      ag.modalidad ? `<div style="display:flex;gap:10px;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05)"><span style="color:var(--gray3);font-size:13px;font-family:var(--font-sans)">${iconPen()} Modalidad</span><strong style="font-family:var(--font-sans);font-size:13px">${esc(ag.modalidad)}</strong></div>` : '',
+      ag.premios.length ? `<div style="display:flex;gap:10px;justify-content:space-between;padding:8px 0"><span style="color:var(--gray3);font-size:13px;font-family:var(--font-sans)">${iconTrophy()} Premios</span><strong style="font-family:var(--font-sans);font-size:13px;color:var(--yellow)">${ag.premios.length}</strong></div>` : ''
+    ].filter(Boolean).join('');
+
+    const infoCard = `
+      <div class="sidebar-card">
+        <div class="sidebar-card-title">Informacion</div>
+        ${infoRows}
+      </div>`;
+
+    // Aportar card
+    const aportarCard = `
+      <div class="sidebar-card" style="background:rgba(57,134,255,0.06);border-color:rgba(57,134,255,0.15)">
+        <div class="sidebar-card-title" style="color:var(--blue)">Tienes mas informacion?</div>
+        <p style="font-family:var(--font-body);font-size:15px;color:var(--gray4);margin-bottom:16px;line-height:1.6">
+          Fotos, videos, carteles o datos que completen esta ficha.
+        </p>
+        <a href="aporta.html" class="btn btn-primary btn-sm" style="width:100%;justify-content:center">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+          Aportar al archivo
+        </a>
+      </div>`;
+
+    return autoresCard + componentesCard + infoCard + aportarCard;
+  }
+
+  /* ---- Not found state ---- */
+  function renderNotFound() {
+    document.getElementById('hero-loading').style.display = 'none';
+    document.getElementById('hero-content').style.display = 'none';
+    document.getElementById('body-loading').style.display = 'none';
+    document.getElementById('detail-hero').style.padding = '120px 0 60px';
+
+    document.getElementById('detail-body').innerHTML = `
+      <div class="not-found-state">
+        <div class="not-found-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="36" height="36"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"/></svg>
+        </div>
+        <h1 style="font-family:var(--font-display);font-size:clamp(28px,5vw,48px);font-weight:900">Agrupacion no encontrada</h1>
+        <p style="font-family:var(--font-body);font-size:18px;color:var(--gray4);max-width:440px;font-style:italic;line-height:1.6">
+          No hemos encontrado una agrupacion con ese identificador. Puede que el enlace sea incorrecto o la ficha aun no este disponible.
+        </p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center">
+          <a href="agrupaciones.html" class="btn btn-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+            Ver todas las agrupaciones
+          </a>
+          <a href="index.html" class="btn btn-outline">Volver al inicio</a>
+        </div>
+      </div>`;
+  }
+
+  /* ---- Main ---- */
+  document.addEventListener('DOMContentLoaded', async () => {
+    const id = new URLSearchParams(location.search).get('id');
+
+    if (!id) {
+      renderNotFound();
+      return;
+    }
+
+    const ag = await DataAPI.getAgrupacionById(id);
+
+    if (!ag) {
+      renderNotFound();
+      return;
+    }
+
+    // Update page <title> and meta description
+    document.title = `${ag.nombre}${ag.anyo ? ' (' + ag.anyo + ')' : ''} — Archivo del Carnaval del Campo de Gibraltar`;
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+      metaDesc.content = `${ag.nombre}${ag.anyo ? ', ' + ag.anyo : ''}${ag.municipio ? ', ' + ag.municipio : ''}. ${ag.descripcion ? ag.descripcion.slice(0, 140) + '...' : 'Ficha en el Archivo del Carnaval del Campo de Gibraltar.'}`;
+    }
+    // OG tags
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+    if (ogTitle) ogTitle.content = document.title;
+
+    // Render hero
+    const heroLoading = document.getElementById('hero-loading');
+    const heroContent = document.getElementById('hero-content');
+    heroLoading.style.display = 'none';
+    heroContent.innerHTML = renderHero(ag);
+    heroContent.style.display = 'block';
+
+    // Load Supabase fotos, alias map and valoraciones in parallel
+    const SUPA_URL = 'https://mlhcetkaiidwjfmmzpmj.supabase.co';
+    const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1saGNldGthaWlkd2pmbW16cG1qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1Nzc1NDcsImV4cCI6MjA5NDE1MzU0N30.-NONc0cweym8cNqvSfZt2JQUyrDSLdMz9OMZL2q-ork';
+    const [supaFotos, aliasMap, valoracionesRes] = await Promise.all([
+      DataAPI.getFototeca({ agrupacion: ag.id }).catch(() => []),
+      (typeof loadAliases === 'function') ? loadAliases() : Promise.resolve(new Map()),
+      fetch(`${SUPA_URL}/rest/v1/valoraciones?agrupacion_id=eq.${encodeURIComponent(ag.id)}&select=puntuacion`, { headers: { apikey: SUPA_KEY, Authorization: 'Bearer ' + SUPA_KEY } }).then(r => r.ok ? r.json() : []).catch(() => [])
+    ]);
+    const valoraciones = Array.isArray(valoracionesRes) ? valoracionesRes : [];
+
+    // Use first Supabase photo as OG image if available
+    if (supaFotos.length) {
+      let ogImg = document.querySelector('meta[property="og:image"]');
+      if (!ogImg) { ogImg = document.createElement('meta'); ogImg.setAttribute('property','og:image'); document.head.appendChild(ogImg); }
+      ogImg.content = supaFotos[0].url;
+    } else if (ag.fotografias.length) {
+      let ogImg = document.querySelector('meta[property="og:image"]');
+      if (!ogImg) { ogImg = document.createElement('meta'); ogImg.setAttribute('property','og:image'); document.head.appendChild(ogImg); }
+      ogImg.content = ag.fotografias[0];
+    }
+
+    // Render body: build main + sidebar HTML, then swap
+    let mainHtml = renderDescripcion(ag) + renderPremios(ag) + renderLetrasBtn(ag) + renderFototeca(ag, supaFotos) + renderVideos(ag) + renderCarteles(ag) + renderRating(ag, valoraciones);
+
+    const sidebarHtml = renderSidebar(ag, aliasMap);
+
+    document.getElementById('body-loading').style.display = 'none';
+    document.getElementById('detail-body').innerHTML = `
+      <div class="detail-grid">
+        <main class="detail-body" id="main-column">${mainHtml}</main>
+        <aside class="detail-sidebar" id="sidebar-column">${sidebarHtml}</aside>
+      </div>`;
+
+    // Wire up rating stars
+    const starsContainer = document.getElementById('rating-stars');
+    if (starsContainer) {
+      let hovered = 0;
+      const starEls = starsContainer.querySelectorAll('.rating-star');
+      function updateStarColors(upTo) {
+        starEls.forEach((s, i) => {
+          s.style.color = i < upTo ? '#fcbd0d' : 'rgba(255,255,255,0.15)';
+        });
+      }
+      starEls.forEach(s => {
+        s.addEventListener('mouseenter', () => { hovered = parseInt(s.dataset.val); updateStarColors(hovered); });
+        s.addEventListener('mouseleave', () => { hovered = 0; updateStarColors(Math.round(valoraciones.length ? valoraciones.reduce((sum,v)=>sum+v.puntuacion,0)/valoraciones.length : 0)); });
+        s.addEventListener('click', async () => {
+          const puntuacion = parseInt(s.dataset.val);
+          const fb = document.getElementById('rating-feedback');
+          if (fb) fb.textContent = 'Guardando…';
+          try {
+            const r = await fetch(`${SUPA_URL}/rest/v1/valoraciones`, {
+              method: 'POST',
+              headers: { apikey: SUPA_KEY, Authorization: 'Bearer ' + SUPA_KEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+              body: JSON.stringify({ agrupacion_id: ag.id, agrupacion_nombre: ag.nombre, puntuacion })
+            });
+            if (r.ok || r.status === 201) {
+              updateStarColors(puntuacion);
+              if (fb) fb.textContent = `Valoraste con ${puntuacion}/10. ¡Gracias!`;
+            } else {
+              if (fb) fb.textContent = 'Error al guardar la valoración.';
+            }
+          } catch(e) {
+            if (fb) fb.textContent = 'Error de conexión.';
+          }
+        });
+      });
+    }
+
+    // Async: relacionadas (appended to main column after render)
+    renderRelacionadas(ag).then(html => {
+      const mainCol = document.getElementById('main-column');
+      if (mainCol && html) {
+        mainCol.insertAdjacentHTML('beforeend', html);
+      }
+    });
+  });
+
+  // Expose slugify for sidebar (app.js defines slugify inside a closure, so we use DataAPI's version or the global)
+  function slugify(str) {
+    return String(str)
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase().trim()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '');
+  }
+}());
+</script>
+</body>
+</html>

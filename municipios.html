@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Municipios · Archivo del Carnaval del Campo de Gibraltar</title>
+  <meta name="description" content="Los ocho municipios del Campo de Gibraltar y su tradición carnavalesca. Algeciras, La Línea, San Roque, Los Barrios y más." />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+<div id="navbar-placeholder"></div>
+
+<!-- PAGE HERO -->
+<section class="page-hero-v2 page-hero-v2--municipios">
+  <div class="page-hero-v2__bg">
+    <div class="page-hero-v2__orb page-hero-v2__orb--1"></div>
+    <div class="page-hero-v2__orb page-hero-v2__orb--2"></div>
+  </div>
+  <div class="container page-hero-v2__inner">
+    <nav class="page-hero-v2__breadcrumb" aria-label="Migas de pan">
+      <a href="index.html">Inicio</a>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      <span>Municipios</span>
+    </nav>
+    <div class="page-hero-v2__label">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      El territorio del carnaval
+    </div>
+    <h1 class="page-hero-v2__title">Municipios del<br>Campo de Gibraltar</h1>
+    <p class="page-hero-v2__subtitle">Ocho municipios, ocho tradiciones. El Carnaval del Campo de Gibraltar es el latido colectivo de toda una comarca que se expresa con ingenio, música y color.</p>
+    <div class="page-hero-v2__stats" id="hero-stats">
+      <div class="page-hero-v2__stat"><span class="page-hero-v2__stat-val" id="stat-municipios">8</span><span class="page-hero-v2__stat-label">municipios</span></div>
+      <div class="page-hero-v2__stat"><span class="page-hero-v2__stat-val" id="stat-agrupaciones">—</span><span class="page-hero-v2__stat-label">agrupaciones</span></div>
+    </div>
+  </div>
+</section>
+
+<main class="site-main">
+
+  <!-- MUNICIPIOS GRID -->
+  <section class="section section-dark">
+    <div class="container">
+
+      <div id="loading-state" class="loading-v2">
+        <div class="loading-v2__dots"><span></span><span></span><span></span></div>
+        <span>Cargando municipios…</span>
+      </div>
+
+      <div id="municipios-grid" class="municipios-grid-v2" role="list" aria-label="Municipios del Campo de Gibraltar" hidden></div>
+
+      <div id="empty-state" class="empty-v2" hidden>
+        <div class="empty-v2__icon">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <p class="empty-v2__title">No se pudieron cargar los municipios</p>
+        <p class="empty-v2__desc">Por favor, inténtalo de nuevo más tarde.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- COMARCA STATS -->
+  <section class="section section-dark2">
+    <div class="container">
+      <div class="comarca-banner">
+        <div class="comarca-banner__text">
+          <div class="section-eyebrow"><div class="eyebrow-line"></div>La comarca</div>
+          <h2 class="comarca-banner__title">Una tradición <span class="accent">centenaria</span></h2>
+          <p class="comarca-banner__desc">El Campo de Gibraltar reúne una de las tradiciones carnavalescas más ricas del sur de España, con agrupaciones participando en concursos desde principios del siglo XX.</p>
+        </div>
+        <div class="comarca-banner__stats" id="comarca-stats"></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div id="footer-placeholder"></div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  const MUNICIPIO_IMAGES = {
+    'algeciras':          'https://images.pexels.com/photos/3727255/pexels-photo-3727255.jpeg?auto=compress&cs=tinysrgb&w=800',
+    'la-linea':           'https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?auto=compress&cs=tinysrgb&w=800',
+    'san-roque':          'https://images.pexels.com/photos/2356045/pexels-photo-2356045.jpeg?auto=compress&cs=tinysrgb&w=800',
+    'los-barrios':        'https://images.pexels.com/photos/1549200/pexels-photo-1549200.jpeg?auto=compress&cs=tinysrgb&w=800',
+    'tarifa':             'https://images.pexels.com/photos/3601452/pexels-photo-3601452.jpeg?auto=compress&cs=tinysrgb&w=800',
+    'jimena-de-la-frontera': 'https://images.pexels.com/photos/2790396/pexels-photo-2790396.jpeg?auto=compress&cs=tinysrgb&w=800',
+    'castellar-de-la-frontera': 'https://images.pexels.com/photos/3155666/pexels-photo-3155666.jpeg?auto=compress&cs=tinysrgb&w=800',
+    'la-linea-de-la-concepcion': 'https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?auto=compress&cs=tinysrgb&w=800'
+  };
+
+  const ACCENT_COLORS = ['--blue','--pink','--yellow','--green','--orange','--blue','--pink','--yellow'];
+
+  const grid         = document.getElementById('municipios-grid');
+  const loadingState = document.getElementById('loading-state');
+  const emptyState   = document.getElementById('empty-state');
+  const statsEl      = document.getElementById('comarca-stats');
+  const statAg       = document.getElementById('stat-agrupaciones');
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    if (typeof initPage === 'function') initPage();
+    await loadMunicipios();
+  });
+
+  async function loadMunicipios() {
+    try {
+      const municipios = await DataAPI.getMunicipios();
+      if (!municipios || !municipios.length) { showEmpty(); return; }
+      // Load DB extras to get custom colors and photos
+      let extras = [];
+      try {
+        const SUPA_URL = 'https://mlhcetkaiidwjfmmzpmj.supabase.co';
+        const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1saGNldGthaWlkd2pmbW16cG1qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1Nzc1NDcsImV4cCI6MjA5NDE1MzU0N30.-NONc0cweym8cNqvSfZt2JQUyrDSLdMz9OMZL2q-ork';
+        const res = await fetch(`${SUPA_URL}/rest/v1/municipios_extra?select=*`, {
+          headers: { apikey: SUPA_KEY, Authorization: 'Bearer ' + SUPA_KEY }
+        });
+        if (res.ok) extras = await res.json();
+      } catch(e) {}
+      const extraBySlug = new Map(extras.map(e => [e.slug, e]));
+      municipios.forEach(m => {
+        const ex = extraBySlug.get(m.slug);
+        if (ex) {
+          if (ex.foto_url) m.imagen = ex.foto_url;
+          if (ex.color) m.color = ex.color;
+          if (ex.descripcion) m.historia = ex.descripcion;
+        }
+        // Set color from municipioColor function if not overridden
+        if (!m.color && typeof municipioColor === 'function') m.color = municipioColor(m.nombre);
+      });
+      renderGrid(municipios);
+      renderStats(municipios);
+    } catch(err) {
+      console.error(err);
+      showEmpty();
+    }
+  }
+
+  function renderGrid(municipios) {
+    loadingState.hidden = true;
+    grid.hidden = false;
+    grid.innerHTML = '';
+    municipios.forEach((m, i) => grid.appendChild(buildCard(m, i)));
+  }
+
+  function buildCard(m, idx) {
+    const slug   = m.slug || slugify(m.nombre);
+    const img    = m.imagen || MUNICIPIO_IMAGES[slug] || MUNICIPIO_IMAGES['algeciras'];
+    const count  = Array.isArray(m.agrupaciones) ? m.agrupaciones.length : (m.agrupaciones_count || 0);
+    const color  = m.color || (typeof municipioColor === 'function' ? municipioColor(m.nombre) : '#3986ff');
+
+    const article = document.createElement('article');
+    article.className = 'muni-card';
+    article.setAttribute('role','listitem');
+    article.style.setProperty('--muni-accent', color);
+
+    const a = document.createElement('a');
+    a.href = `municipio.html?slug=${encodeURIComponent(slug)}`;
+    a.className = 'muni-card__link';
+    a.setAttribute('aria-label', `Ver ${m.nombre}`);
+    a.innerHTML = `
+      <div class="muni-card__img-wrap">
+        <img src="${esc(img)}" alt="${esc(m.nombre)}" class="muni-card__img" loading="lazy" decoding="async" />
+        <div class="muni-card__overlay"></div>
+        <div class="muni-card__chip">${count} ${count===1?'agrupación':'agrupaciones'}</div>
+      </div>
+      <div class="muni-card__body">
+        <h2 class="muni-card__name">${esc(m.nombre)}</h2>
+        <span class="muni-card__arrow">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </span>
+      </div>
+    `;
+    article.appendChild(a);
+    return article;
+  }
+
+  function renderStats(municipios) {
+    const total = municipios.reduce((s,m) => s + (Array.isArray(m.agrupaciones) ? m.agrupaciones.length : (m.agrupaciones_count||0)), 0);
+    if (statAg) statAg.textContent = total || '—';
+    const items = [
+      { val: municipios.length, label: 'Municipios' },
+      { val: total, label: 'Agrupaciones' },
+      { val: '100+', label: 'Años de historia' }
+    ];
+    if (statsEl) statsEl.innerHTML = items.map(s =>
+      `<div class="comarca-stat-v2"><span class="comarca-stat-v2__val">${s.val}</span><span class="comarca-stat-v2__label">${s.label}</span></div>`
+    ).join('');
+  }
+
+  function showEmpty() {
+    loadingState.hidden = true;
+    grid.hidden = true;
+    emptyState.hidden = false;
+  }
+
+  function slugify(str) {
+    return String(str).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
+  }
+
+  function esc(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+}());
+</script>
+</body>
+</html>

@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Letras — Archivo del Carnaval del Campo de Gibraltar</title>
+  <meta name="description" content="Cancionero de agrupaciones del Carnaval del Campo de Gibraltar." />
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    .letras-hero {
+      padding: 100px 0 56px;
+      background: linear-gradient(160deg, var(--white) 0%, #eef3ff 100%);
+      border-bottom: 1px solid var(--border);
+    }
+    .letras-hero__breadcrumb {
+      font-family: var(--font-sans);
+      font-size: 13px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 24px;
+    }
+    .letras-hero__breadcrumb a:hover { color: var(--blue); }
+    .letras-hero__label {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 12px;
+    }
+    .letras-hero__title {
+      font-family: var(--font-display);
+      font-size: clamp(32px, 5vw, 56px);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+    .letras-hero__sub {
+      font-family: var(--font-sans);
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    /* Tabs for tipos */
+    .letras-tabs {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0;
+    }
+    .letras-tab {
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 10px 18px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: color var(--transition), border-color var(--transition);
+      white-space: nowrap;
+    }
+    .letras-tab:hover { color: var(--blue); }
+    .letras-tab.active { color: var(--blue); border-bottom-color: var(--blue); }
+
+    /* Letra card */
+    .letras-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .letra-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--card-radius);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+    .letra-card__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      cursor: pointer;
+      user-select: none;
+      gap: 16px;
+    }
+    .letra-card__header:hover { background: var(--surface2); }
+    .letra-card__tipo {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--blue);
+      background: rgba(57,134,255,0.1);
+      padding: 3px 10px;
+      border-radius: 20px;
+      flex-shrink: 0;
+    }
+    .letra-card__titulo {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+      flex: 1;
+    }
+    .letra-card__chevron {
+      color: var(--text-muted);
+      flex-shrink: 0;
+      transition: transform var(--transition);
+    }
+    .letra-card.open .letra-card__chevron { transform: rotate(90deg); }
+    .letra-card__body {
+      display: none;
+      padding: 0 24px 28px;
+      border-top: 1px solid var(--border);
+    }
+    .letra-card.open .letra-card__body { display: block; }
+    .letra-card__contenido {
+      font-family: var(--font-body);
+      font-size: 17px;
+      line-height: 1.9;
+      color: var(--text-secondary);
+      white-space: pre-wrap;
+      padding-top: 20px;
+    }
+
+    /* Empty & loading */
+    .letras-empty {
+      text-align: center;
+      padding: 80px 24px;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+    }
+    .letras-empty__icon { width: 56px; height: 56px; margin: 0 auto 16px; opacity: 0.4; }
+    .letras-empty__title { font-size: 18px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
+    .letras-empty__desc { font-size: 15px; }
+
+    .letras-loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 80px 0;
+      font-family: var(--font-sans);
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+    .letras-loading__dots { display: flex; gap: 6px; }
+    .letras-loading__dots span {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--blue);
+      animation: dotPulse 1.2s ease-in-out infinite;
+    }
+    .letras-loading__dots span:nth-child(2) { animation-delay: 0.2s; }
+    .letras-loading__dots span:nth-child(3) { animation-delay: 0.4s; }
+  </style>
+</head>
+<body>
+
+<div id="navbar-placeholder"></div>
+
+<section class="letras-hero">
+  <div class="container">
+    <nav class="letras-hero__breadcrumb" aria-label="Migas de pan">
+      <a href="index.html">Inicio</a>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      <span id="breadcrumb-ag" style="color:var(--text-secondary)"></span>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      <span>Letras</span>
+    </nav>
+    <div class="letras-hero__label">Cancionero</div>
+    <h1 class="letras-hero__title" id="hero-title">Letras</h1>
+    <p class="letras-hero__sub" id="hero-sub"></p>
+  </div>
+</section>
+
+<main>
+  <div class="container" style="padding-top:48px;padding-bottom:80px">
+
+    <div id="loading-state" class="letras-loading">
+      <div class="letras-loading__dots"><span></span><span></span><span></span></div>
+      <span>Cargando letras…</span>
+    </div>
+
+    <div id="content" hidden>
+      <div class="letras-tabs" id="tabs-bar"></div>
+      <div class="letras-list" id="letras-list"></div>
+    </div>
+
+    <div id="empty-state" class="letras-empty" hidden>
+      <svg class="letras-empty__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <p class="letras-empty__title">Sin letras registradas</p>
+      <p class="letras-empty__desc">Esta agrupación aún no tiene letras en el archivo.</p>
+      <div style="margin-top:24px"><a id="back-link" href="agrupaciones.html" class="btn btn-outline">Volver a la agrupación</a></div>
+    </div>
+
+  </div>
+</main>
+
+<div id="footer-placeholder"></div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  const SUPA_URL = 'https://mlhcetkaiidwjfmmzpmj.supabase.co';
+  const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1saGNldGthaWlkd2pmbW16cG1qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1Nzc1NDcsImV4cCI6MjA5NDE1MzU0N30.-NONc0cweym8cNqvSfZt2JQUyrDSLdMz9OMZL2q-ork';
+
+  function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  const params = new URLSearchParams(location.search);
+  const agId     = params.get('id') || '';
+  const agNombre = params.get('nombre') ? decodeURIComponent(params.get('nombre')) : '';
+
+  let currentTipo = null;
+  let allLetras = [];
+
+  function show(id) { const el = document.getElementById(id); if (el) el.hidden = false; }
+  function hide(id) { const el = document.getElementById(id); if (el) el.hidden = true; }
+
+  async function loadLetras() {
+    if (!agId) { hide('loading-state'); show('empty-state'); return; }
+
+    // Set hero
+    const heroTitle = document.getElementById('hero-title');
+    const heroSub   = document.getElementById('hero-sub');
+    const bcAg      = document.getElementById('breadcrumb-ag');
+    if (agNombre) {
+      if (heroTitle) heroTitle.textContent = agNombre;
+      if (bcAg) { bcAg.textContent = agNombre; bcAg.setAttribute('href', `agrupacion.html?id=${esc(agId)}`); bcAg.style.cursor = 'pointer'; bcAg.onclick = () => location.href = `agrupacion.html?id=${esc(agId)}`; }
+    }
+    const backLink = document.getElementById('back-link');
+    if (backLink) backLink.href = `agrupacion.html?id=${esc(agId)}`;
+    document.title = `Letras — ${agNombre || agId} — Archivo del Carnaval`;
+
+    try {
+      const res = await fetch(
+        `${SUPA_URL}/rest/v1/letras?agrupacion_id=eq.${encodeURIComponent(agId)}&order=tipo.asc,orden.asc,titulo.asc&select=*`,
+        { headers: { apikey: SUPA_KEY, Authorization: 'Bearer ' + SUPA_KEY } }
+      );
+      allLetras = res.ok ? (await res.json()) : [];
+    } catch(e) { allLetras = []; }
+
+    hide('loading-state');
+
+    if (!allLetras.length) { show('empty-state'); return; }
+
+    if (heroSub) heroSub.textContent = `${allLetras.length} letra${allLetras.length !== 1 ? 's' : ''} en el cancionero`;
+
+    // Build tabs
+    const tipos = [...new Set(allLetras.map(l => l.tipo))];
+    const tabsBar = document.getElementById('tabs-bar');
+    if (tabsBar) {
+      const allTab = document.createElement('button');
+      allTab.className = 'letras-tab active';
+      allTab.textContent = `Todas (${allLetras.length})`;
+      allTab.addEventListener('click', () => { selectTab(null); activateTab(allTab); });
+      tabsBar.appendChild(allTab);
+
+      tipos.forEach(tipo => {
+        const count = allLetras.filter(l => l.tipo === tipo).length;
+        const btn = document.createElement('button');
+        btn.className = 'letras-tab';
+        btn.textContent = `${tipo} (${count})`;
+        btn.addEventListener('click', () => { selectTab(tipo); activateTab(btn); });
+        tabsBar.appendChild(btn);
+      });
+    }
+
+    renderList(allLetras);
+    show('content');
+  }
+
+  function activateTab(activeBtn) {
+    document.querySelectorAll('.letras-tab').forEach(b => b.classList.remove('active'));
+    activeBtn.classList.add('active');
+  }
+
+  function selectTab(tipo) {
+    currentTipo = tipo;
+    const filtered = tipo ? allLetras.filter(l => l.tipo === tipo) : allLetras;
+    renderList(filtered);
+  }
+
+  function renderList(letras) {
+    const list = document.getElementById('letras-list');
+    if (!list) return;
+    list.innerHTML = '';
+    letras.forEach(letra => {
+      const card = document.createElement('div');
+      card.className = 'letra-card';
+      card.innerHTML = `
+        <div class="letra-card__header">
+          <span class="letra-card__tipo">${esc(letra.tipo)}</span>
+          <span class="letra-card__titulo">${esc(letra.titulo || '(Sin título)')}</span>
+          <svg class="letra-card__chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="letra-card__body">
+          <div class="letra-card__contenido">${esc(letra.contenido || '')}</div>
+        </div>`;
+      card.querySelector('.letra-card__header').addEventListener('click', () => {
+        card.classList.toggle('open');
+      });
+      list.appendChild(card);
+    });
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => { initPage && initPage(); loadLetras(); });
+  else { if (typeof initPage === 'function') initPage(); loadLetras(); }
+}());
+</script>
+
+</body>
+</html>

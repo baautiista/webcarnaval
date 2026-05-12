@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Archivo del Carnaval del Campo de Gibraltar</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .admin-header {
+      background: var(--dark2);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+    }
+    .admin-header-title {
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--white);
+    }
+    .admin-header-title span {
+      color: var(--gray3);
+      font-weight: 400;
+    }
+    .admin-content {
+      padding-top: 56px;
+      min-height: 100vh;
+    }
+    .admin-overview {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+    .overview-card {
+      background: var(--dark2);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .overview-num {
+      font-family: var(--font-display);
+      font-size: 32px;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--blue), var(--pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .overview-label {
+      font-family: var(--font-sans);
+      font-size: 12px;
+      color: var(--gray3);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .admin-table-wrap { overflow-x: auto; }
+    table { min-width: 600px; }
+  </style>
+</head>
+<body>
+
+<!-- Login -->
+<div id="admin-login" class="admin-login" style="display:none">
+  <div class="admin-login-card">
+    <div style="text-align:center;margin-bottom:32px">
+      <div style="width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,var(--blue),var(--pink));display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" width="26" height="26"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg>
+      </div>
+      <h1 style="font-family:var(--font-display);font-size:24px;font-weight:700;margin-bottom:4px">Panel de Administracion</h1>
+      <p style="font-family:var(--font-sans);font-size:14px;color:var(--gray3)">Archivo del Carnaval del Campo de Gibraltar</p>
+    </div>
+    <form id="login-form">
+      <div class="form-group">
+        <label class="form-label" for="login-user">Usuario</label>
+        <input class="form-input" type="text" id="login-user" value="admin" autocomplete="username">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="login-pass">Contraseña</label>
+        <input class="form-input" type="password" id="login-pass" placeholder="Contraseña" autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px">
+        Acceder
+      </button>
+    </form>
+    <p style="font-family:var(--font-sans);font-size:12px;color:var(--gray3);text-align:center;margin-top:20px">
+      Usuario por defecto: <strong style="color:var(--gray4)">admin</strong> / Contraseña: <strong style="color:var(--gray4)">carnaval2024</strong>
+    </p>
+    <p style="font-family:var(--font-sans);font-size:11px;color:var(--gray3);text-align:center;margin-top:8px">
+      Almacenamiento local. Sin backend. Solo tu dispositivo.
+    </p>
+  </div>
+</div>
+
+<!-- Admin Panel -->
+<div id="admin-panel" style="display:none">
+  <div class="admin-header">
+    <div class="admin-header-title">Panel de Admin <span>— Archivo del Carnaval CG</span></div>
+    <div style="display:flex;gap:12px;align-items:center">
+      <a href="index.html" style="font-family:var(--font-sans);font-size:13px;color:var(--gray4)">Ver sitio</a>
+      <button id="admin-logout" class="btn btn-sm" style="background:rgba(249,22,105,0.15);color:var(--pink);border:1px solid rgba(249,22,105,0.3)">
+        Cerrar sesion
+      </button>
+    </div>
+  </div>
+
+  <div class="admin-content">
+    <nav class="admin-nav">
+      <button class="admin-nav-btn active" data-section="overview">Resumen</button>
+      <button class="admin-nav-btn" data-section="agrupaciones">Agrupaciones</button>
+      <button class="admin-nav-btn" data-section="autores">Autores</button>
+      <button class="admin-nav-btn" data-section="municipios">Municipios</button>
+      <button class="admin-nav-btn" data-section="home-texts">Textos Home</button>
+      <button class="admin-nav-btn" data-section="credentials">Credenciales</button>
+    </nav>
+
+    <div class="container" style="padding-top:40px;padding-bottom:80px">
+
+      <!-- Resumen -->
+      <div id="section-overview" class="admin-section active">
+        <div class="section-eyebrow" style="margin-bottom:20px"><div class="eyebrow-line"></div>Panel</div>
+        <h2 style="font-family:var(--font-display);font-size:32px;font-weight:700;margin-bottom:32px">Resumen del archivo</h2>
+        <div class="admin-overview" id="admin-overview-stats">
+          <div class="spinner" style="margin:40px auto;grid-column:1/-1"></div>
+        </div>
+        <div class="sidebar-card">
+          <div class="sidebar-card-title">Informacion del sistema</div>
+          <div style="font-family:var(--font-sans);font-size:13px;color:var(--gray4);line-height:1.8">
+            <div>Almacenamiento: <strong style="color:var(--white)">localStorage (navegador)</strong></div>
+            <div>Datos: <strong style="color:var(--white)">Google Sheets CSV publico</strong></div>
+            <div>Version: <strong style="color:var(--white)">1.0.0</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Agrupaciones -->
+      <div id="section-agrupaciones" class="admin-section">
+        <div class="section-eyebrow" style="margin-bottom:20px"><div class="eyebrow-line"></div>Gestion</div>
+        <h2 style="font-family:var(--font-display);font-size:32px;font-weight:700;margin-bottom:8px">Agrupaciones</h2>
+        <p style="font-family:var(--font-sans);font-size:14px;color:var(--gray3);margin-bottom:32px">Marca agrupaciones como destacadas para que aparezcan en portada.</p>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Año</th>
+                <th>Municipio</th>
+                <th>Modalidad</th>
+                <th>Destacada</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="agrupaciones-tbody">
+              <tr><td colspan="6" style="text-align:center;padding:40px;color:var(--gray3)">
+                <div class="spinner" style="margin:0 auto 12px"></div>
+                Cargando...
+              </td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Autores -->
+      <div id="section-autores" class="admin-section">
+        <div class="section-eyebrow" style="margin-bottom:20px"><div class="eyebrow-line"></div>Gestion</div>
+        <h2 style="font-family:var(--font-display);font-size:32px;font-weight:700;margin-bottom:8px">Autores</h2>
+        <p style="font-family:var(--font-sans);font-size:14px;color:var(--gray3);margin-bottom:32px">Marca autores como destacados.</p>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr><th>Nombre</th><th>Agrupaciones</th><th>Destacado</th></tr>
+            </thead>
+            <tbody id="autores-tbody">
+              <tr><td colspan="3" style="text-align:center;padding:40px;color:var(--gray3)">
+                <div class="spinner" style="margin:0 auto 12px"></div>
+                Cargando...
+              </td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Municipios -->
+      <div id="section-municipios" class="admin-section">
+        <div class="section-eyebrow" style="margin-bottom:20px"><div class="eyebrow-line"></div>Gestion</div>
+        <h2 style="font-family:var(--font-display);font-size:32px;font-weight:700;margin-bottom:8px">Municipios</h2>
+        <p style="font-family:var(--font-sans);font-size:14px;color:var(--gray3);margin-bottom:32px">Gestiona que municipios aparecen destacados.</p>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr><th>Municipio</th><th>Agrupaciones</th><th>Destacado</th></tr>
+            </thead>
+            <tbody id="municipios-tbody">
+              <tr><td colspan="3" style="text-align:center;padding:40px;color:var(--gray3)">
+                <div class="spinner" style="margin:0 auto 12px"></div>
+                Cargando...
+              </td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Textos Home -->
+      <div id="section-home-texts" class="admin-section">
+        <div class="section-eyebrow" style="margin-bottom:20px"><div class="eyebrow-line"></div>Contenido</div>
+        <h2 style="font-family:var(--font-display);font-size:32px;font-weight:700;margin-bottom:8px">Textos de la portada</h2>
+        <p style="font-family:var(--font-sans);font-size:14px;color:var(--gray3);margin-bottom:32px">Personaliza los textos visibles en la pagina de inicio.</p>
+        <div id="home-texts-form" style="max-width:600px">
+          <div class="loading-spinner"><div class="spinner"></div></div>
+        </div>
+      </div>
+
+      <!-- Credenciales -->
+      <div id="section-credentials" class="admin-section">
+        <div class="section-eyebrow" style="margin-bottom:20px"><div class="eyebrow-line"></div>Seguridad</div>
+        <h2 style="font-family:var(--font-display);font-size:32px;font-weight:700;margin-bottom:8px">Credenciales</h2>
+        <p style="font-family:var(--font-sans);font-size:14px;color:var(--gray3);margin-bottom:32px">Cambia el usuario y contraseña del panel. Se guardan solo en este navegador.</p>
+        <div id="credentials-form" style="max-width:480px">
+          <div class="loading-spinner"><div class="spinner"></div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script src="js/admin.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  await renderAdmin();
+
+  if (isLoggedIn()) {
+    const stats = await DataAPI.getStats();
+    const container = document.getElementById('admin-overview-stats');
+    if (container) {
+      container.innerHTML = [
+        { label: 'Agrupaciones', val: stats.agrupaciones, color: 'var(--blue)' },
+        { label: 'Autores', val: stats.autores, color: 'var(--pink)' },
+        { label: 'Componentes', val: stats.componentes, color: 'var(--yellow)' },
+        { label: 'Municipios', val: stats.municipios, color: 'var(--green)' },
+        { label: 'Fotografias', val: stats.fotos, color: 'var(--orange)' },
+        { label: 'Videos', val: stats.videos, color: 'var(--blue)' }
+      ].map(s => `<div class="overview-card">
+        <div class="overview-num" style="background:${s.color};-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">${s.val}</div>
+        <div class="overview-label">${s.label}</div>
+      </div>`).join('');
+    }
+  }
+});
+</script>
+</body>
+</html>

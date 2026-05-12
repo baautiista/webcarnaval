@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fototeca · Archivo del Carnaval del Campo de Gibraltar</title>
+  <meta name="description" content="Archivo fotográfico del Carnaval del Campo de Gibraltar. Explora cientos de fotografías de agrupaciones, comparsas y chirigotas." />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+<div id="navbar-placeholder"></div>
+
+<!-- PAGE HERO -->
+<section class="page-hero-v2 page-hero-v2--fototeca">
+  <div class="page-hero-v2__bg">
+    <div class="page-hero-v2__orb page-hero-v2__orb--1"></div>
+    <div class="page-hero-v2__orb page-hero-v2__orb--2"></div>
+  </div>
+  <div class="container page-hero-v2__inner">
+    <nav class="page-hero-v2__breadcrumb" aria-label="Migas de pan">
+      <a href="index.html">Inicio</a>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      <span>Fototeca</span>
+    </nav>
+    <div class="page-hero-v2__label">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      Archivo visual
+    </div>
+    <h1 class="page-hero-v2__title">Fototeca</h1>
+    <p class="page-hero-v2__subtitle">El registro fotográfico del Carnaval del Campo de Gibraltar. Décadas de comparsas, chirigotas y cuartetos inmortalizadas en imagen.</p>
+    <div class="page-hero-v2__stats">
+      <div class="page-hero-v2__stat"><span class="page-hero-v2__stat-val" id="stat-total">—</span><span class="page-hero-v2__stat-label">fotografías</span></div>
+    </div>
+  </div>
+</section>
+
+<main class="site-main">
+
+  <!-- FILTERS -->
+  <div class="filter-bar-v2 filter-bar-v2--multi sticky-filters">
+    <div class="container filter-bar-v2__inner filter-bar-v2__inner--wrap">
+      <div class="filter-bar-v2__search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="search" id="search-input" class="filter-bar-v2__input" placeholder="Buscar agrupación, año…" autocomplete="off" />
+      </div>
+      <div class="filter-bar-v2__selects">
+        <div class="filter-select-wrap">
+          <select id="municipio-select" class="filter-bar-v2__select"><option value="">Todos los municipios</option></select>
+        </div>
+        <div class="filter-select-wrap">
+          <select id="año-select" class="filter-bar-v2__select"><option value="">Todos los años</option></select>
+        </div>
+        <div class="filter-select-wrap">
+          <select id="agrupacion-select" class="filter-bar-v2__select"><option value="">Todas las agrupaciones</option></select>
+        </div>
+        <button class="filter-bar-v2__btn-clear" id="clear-filters-btn" aria-label="Limpiar filtros">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          Limpiar
+        </button>
+      </div>
+      <span class="filter-bar-v2__count" id="results-count" aria-live="polite"></span>
+    </div>
+  </div>
+
+  <!-- GALLERY -->
+  <section class="section section-dark">
+    <div class="container">
+      <div id="gallery-container" class="gallery-grid-v2" role="list" aria-label="Galería de fotografías"></div>
+
+      <div id="empty-state" class="empty-v2" hidden>
+        <div class="empty-v2__icon">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        </div>
+        <p class="empty-v2__title">Sin fotografías</p>
+        <p class="empty-v2__desc">No hay fotografías que coincidan con los filtros actuales.</p>
+        <button class="btn btn-outline" id="empty-clear-btn">Ver todas las fotografías</button>
+      </div>
+
+      <div id="loading-state" class="loading-v2">
+        <div class="loading-v2__dots"><span></span><span></span><span></span></div>
+        <span>Cargando fotografías…</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- LIGHTBOX -->
+<div id="lightbox" class="lightbox-v2" role="dialog" aria-modal="true" aria-label="Visor de fotografía" hidden>
+  <button class="lightbox-v2__close" id="lightbox-close" aria-label="Cerrar">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+  <button class="lightbox-v2__nav lightbox-v2__nav--prev" id="lightbox-prev" aria-label="Anterior">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+  </button>
+  <button class="lightbox-v2__nav lightbox-v2__nav--next" id="lightbox-next" aria-label="Siguiente">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+  </button>
+  <div class="lightbox-v2__stage">
+    <figure class="lightbox-v2__figure">
+      <img id="lightbox-img" class="lightbox-v2__img" src="" alt="" />
+      <figcaption class="lightbox-v2__caption" id="lightbox-caption"></figcaption>
+    </figure>
+  </div>
+  <div class="lightbox-v2__counter" id="lightbox-counter"></div>
+</div>
+<div id="lightbox-backdrop" class="lightbox-v2__backdrop" hidden></div>
+
+<div id="footer-placeholder"></div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  let allPhotos = [], filtered = [], lightboxIndex = 0;
+
+  function esc(str) { return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  function showLoading(show) {
+    const el = document.getElementById('loading-state');
+    if (el) el.hidden = !show;
+  }
+  function showEmpty(show) {
+    const emptyState = document.getElementById('empty-state');
+    const galleryEl  = document.getElementById('gallery-container');
+    if (emptyState) emptyState.hidden = !show;
+    if (galleryEl)  galleryEl.hidden  = show;
+  }
+
+  function updateCount(shown, total) {
+    const resultsCount = document.getElementById('results-count');
+    if (!resultsCount) return;
+    resultsCount.textContent = shown === total
+      ? `${total} ${total===1?'fotografía':'fotografías'}`
+      : `${shown} de ${total} ${total===1?'fotografía':'fotografías'}`;
+  }
+
+  function populateMunicipioSelect(municipios) {
+    const sel = document.getElementById('municipio-select');
+    if (!sel) return;
+    municipios.forEach(m => { const o = document.createElement('option'); o.value = m.slug; o.textContent = m.nombre; sel.appendChild(o); });
+  }
+  function populateAñoSelect(photos) {
+    const sel = document.getElementById('año-select');
+    if (!sel) return;
+    [...new Set(photos.map(p=>p.año).filter(Boolean))].sort((a,b)=>b-a)
+      .forEach(a => { const o = document.createElement('option'); o.value = a; o.textContent = a; sel.appendChild(o); });
+  }
+  function populateAgrupacionSelect(ags) {
+    const sel = document.getElementById('agrupacion-select');
+    if (!sel) return;
+    ags.forEach(ag => { const o = document.createElement('option'); o.value = ag.id; o.textContent = ag.nombre; sel.appendChild(o); });
+  }
+
+  function applyFilters() {
+    const searchInput     = document.getElementById('search-input');
+    const municipioSelect = document.getElementById('municipio-select');
+    const añoSelect       = document.getElementById('año-select');
+    const agrupacionSelect= document.getElementById('agrupacion-select');
+    const q  = (searchInput     ? searchInput.value.toLowerCase().trim() : '');
+    const mv = (municipioSelect  ? municipioSelect.value  : '');
+    const av = (añoSelect        ? añoSelect.value        : '');
+    const agv= (agrupacionSelect ? agrupacionSelect.value : '');
+    filtered = allPhotos.filter(p => {
+      if (mv && p.municipio_slug !== mv) return false;
+      if (av && String(p.año) !== String(av)) return false;
+      if (agv && String(p.agrupacion_id) !== String(agv)) return false;
+      if (q && ![p.agrupacion_nombre, String(p.año||''), p.municipio||''].join(' ').toLowerCase().includes(q)) return false;
+      return true;
+    });
+    renderGallery(filtered);
+    updateCount(filtered.length, allPhotos.length);
+  }
+
+  function renderGallery(photos) {
+    showLoading(false);
+    const galleryEl = document.getElementById('gallery-container');
+    if (!galleryEl) return;
+    galleryEl.innerHTML = '';
+    if (!photos.length) { showEmpty(true); return; }
+    showEmpty(false);
+    photos.forEach((photo, idx) => {
+      const item = document.createElement('div');
+      item.className = 'gallery-item-v2';
+      item.setAttribute('role','listitem');
+      item.setAttribute('aria-label', `${photo.agrupacion_nombre||'Fotografía'}, ${photo.año||''}`);
+
+      const img = document.createElement('img');
+      img.src = photo.url || 'https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?auto=compress&cs=tinysrgb&w=600';
+      img.alt = `${photo.agrupacion_nombre||'Fotografía del carnaval'} – ${photo.año||''}`;
+      img.loading = 'lazy'; img.decoding = 'async';
+
+      const agLink = photo.agrupacion_id
+        ? `<a class="gallery-item-v2__ag-link" href="agrupacion.html?id=${esc(photo.agrupacion_id)}" onclick="event.stopPropagation()" title="Ver agrupación">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+           </a>`
+        : '';
+
+      const overlay = document.createElement('div');
+      overlay.className = 'gallery-item-v2__overlay';
+      overlay.innerHTML = `
+        <span class="gallery-item-v2__name">${esc(photo.agrupacion_nombre||'Sin título')}${agLink}</span>
+        <span class="gallery-item-v2__meta">${photo.año||''}${photo.municipio ? ' · '+esc(photo.municipio) : ''}</span>
+        <span class="gallery-item-v2__zoom">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+        </span>
+      `;
+
+      item.appendChild(img);
+      item.appendChild(overlay);
+      galleryEl.appendChild(item);
+
+      item.addEventListener('click', () => openLightbox(idx));
+      item.addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' ') { e.preventDefault(); openLightbox(idx); } });
+    });
+  }
+
+  /* ---- Lightbox ---- */
+  function openLightbox(idx) {
+    const lightbox         = document.getElementById('lightbox');
+    const lightboxBackdrop = document.getElementById('lightbox-backdrop');
+    const lightboxClose    = document.getElementById('lightbox-close');
+    lightboxIndex = idx;
+    renderLightboxFrame();
+    if (lightbox)         { lightbox.hidden         = false; lightbox.removeAttribute('hidden'); }
+    if (lightboxBackdrop) { lightboxBackdrop.hidden  = false; lightboxBackdrop.removeAttribute('hidden'); }
+    document.body.classList.add('lightbox-open');
+    if (lightboxClose) lightboxClose.focus();
+  }
+  function closeLightbox() {
+    const lightbox         = document.getElementById('lightbox');
+    const lightboxBackdrop = document.getElementById('lightbox-backdrop');
+    if (lightbox)         lightbox.hidden         = true;
+    if (lightboxBackdrop) lightboxBackdrop.hidden  = true;
+    document.body.classList.remove('lightbox-open');
+  }
+  function renderLightboxFrame() {
+    const p = filtered[lightboxIndex]; if (!p) return;
+    const lightboxImg     = document.getElementById('lightbox-img');
+    const lightboxCaption = document.getElementById('lightbox-caption');
+    const lightboxCounter = document.getElementById('lightbox-counter');
+    const lightboxPrev    = document.getElementById('lightbox-prev');
+    const lightboxNext    = document.getElementById('lightbox-next');
+    if (lightboxImg)     { lightboxImg.src = p.url || ''; lightboxImg.alt = `${p.agrupacion_nombre||''} – ${p.año||''}`; }
+    if (lightboxCaption) {
+      const agLink = p.agrupacion_id
+        ? `<a href="agrupacion.html?id=${esc(p.agrupacion_id)}" style="color:inherit;text-decoration:underline" onclick="closeLightbox()">${esc(p.agrupacion_nombre||'')}</a>`
+        : esc(p.agrupacion_nombre||'');
+      lightboxCaption.innerHTML = [agLink, p.año, p.municipio].filter(Boolean).join(' · ');
+    }
+    if (lightboxCounter) lightboxCounter.textContent = `${lightboxIndex+1} / ${filtered.length}`;
+    if (lightboxPrev)    lightboxPrev.disabled  = lightboxIndex <= 0;
+    if (lightboxNext)    lightboxNext.disabled  = lightboxIndex >= filtered.length - 1;
+  }
+
+  function bindLightbox() {
+    const lightbox         = document.getElementById('lightbox');
+    const lightboxBackdrop = document.getElementById('lightbox-backdrop');
+    const lightboxClose    = document.getElementById('lightbox-close');
+    const lightboxPrev     = document.getElementById('lightbox-prev');
+    const lightboxNext     = document.getElementById('lightbox-next');
+    if (lightboxClose)    lightboxClose.addEventListener('click', closeLightbox);
+    if (lightboxBackdrop) lightboxBackdrop.addEventListener('click', closeLightbox);
+    if (lightboxPrev)     lightboxPrev.addEventListener('click', () => { if(lightboxIndex>0){lightboxIndex--;renderLightboxFrame();} });
+    if (lightboxNext)     lightboxNext.addEventListener('click', () => { if(lightboxIndex<filtered.length-1){lightboxIndex++;renderLightboxFrame();} });
+    document.addEventListener('keydown', e => {
+      const lb = document.getElementById('lightbox');
+      if (!lb || lb.hidden) return;
+      if (e.key==='Escape') closeLightbox();
+      if (e.key==='ArrowLeft'  && lightboxIndex>0)                   { lightboxIndex--; renderLightboxFrame(); }
+      if (e.key==='ArrowRight' && lightboxIndex<filtered.length-1)   { lightboxIndex++; renderLightboxFrame(); }
+    });
+  }
+
+  async function init() {
+    showLoading(true);
+    bindLightbox();
+    try {
+      const [photos, municipios, agrupaciones] = await Promise.all([
+        DataAPI.getFototeca({}),
+        DataAPI.getMunicipios(),
+        DataAPI.getAgrupaciones({})
+      ]);
+      allPhotos = photos || [];
+      const statTotal = document.getElementById('stat-total');
+      if (statTotal) statTotal.textContent = allPhotos.length || '0';
+      populateMunicipioSelect(municipios || []);
+      populateAñoSelect(allPhotos);
+      populateAgrupacionSelect(agrupaciones || []);
+
+      const searchInput     = document.getElementById('search-input');
+      const municipioSelect = document.getElementById('municipio-select');
+      const añoSelect       = document.getElementById('año-select');
+      const agrupacionSelect= document.getElementById('agrupacion-select');
+      const clearBtn        = document.getElementById('clear-filters-btn');
+      const emptyClearBtn   = document.getElementById('empty-clear-btn');
+      let timer;
+      if (searchInput)      searchInput.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(applyFilters, 280); });
+      if (municipioSelect)  municipioSelect.addEventListener('change', applyFilters);
+      if (añoSelect)        añoSelect.addEventListener('change', applyFilters);
+      if (agrupacionSelect) agrupacionSelect.addEventListener('change', applyFilters);
+      if (clearBtn)         clearBtn.addEventListener('click', () => {
+        if(searchInput) searchInput.value=''; if(municipioSelect) municipioSelect.value='';
+        if(añoSelect) añoSelect.value=''; if(agrupacionSelect) agrupacionSelect.value='';
+        applyFilters();
+      });
+      if (emptyClearBtn) emptyClearBtn.addEventListener('click', () => {
+        if(searchInput) searchInput.value=''; if(municipioSelect) municipioSelect.value='';
+        if(añoSelect) añoSelect.value=''; if(agrupacionSelect) agrupacionSelect.value='';
+        applyFilters();
+      });
+
+      // Pre-filter if llegamos con ?agrupacion=id en la URL
+      const params = new URLSearchParams(location.search);
+      const agParam = params.get('agrupacion');
+      if (agParam && agrupacionSelect) {
+        agrupacionSelect.value = agParam;
+      }
+
+      applyFilters();
+    } catch(err) {
+      console.error(err);
+      showLoading(false);
+      showEmpty(true);
+    }
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+}());
+</script>
+</body>
+</html>

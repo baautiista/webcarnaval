@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vídeos · Archivo del Carnaval del Campo de Gibraltar</title>
+  <meta name="description" content="Videoteca del Carnaval del Campo de Gibraltar. Actuaciones, pasacalles y galas de las mejores agrupaciones." />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+<div id="navbar-placeholder"></div>
+
+<!-- PAGE HERO -->
+<section class="page-hero-v2 page-hero-v2--videos">
+  <div class="page-hero-v2__bg">
+    <div class="page-hero-v2__orb page-hero-v2__orb--1"></div>
+    <div class="page-hero-v2__orb page-hero-v2__orb--2"></div>
+  </div>
+  <div class="container page-hero-v2__inner">
+    <nav class="page-hero-v2__breadcrumb" aria-label="Migas de pan">
+      <a href="index.html">Inicio</a>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      <span>Vídeos</span>
+    </nav>
+    <div class="page-hero-v2__label">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+      Archivo audiovisual
+    </div>
+    <h1 class="page-hero-v2__title">Vídeos</h1>
+    <p class="page-hero-v2__subtitle">Las actuaciones más memorables del Carnaval del Campo de Gibraltar. Revive las noches de cuartetos, chirigotas y comparsas.</p>
+    <div class="page-hero-v2__stats">
+      <div class="page-hero-v2__stat"><span class="page-hero-v2__stat-val" id="stat-total">—</span><span class="page-hero-v2__stat-label">vídeos</span></div>
+    </div>
+  </div>
+</section>
+
+<main class="site-main">
+
+  <!-- FILTERS -->
+  <div class="filter-bar-v2 filter-bar-v2--multi sticky-filters">
+    <div class="container filter-bar-v2__inner filter-bar-v2__inner--wrap">
+      <div class="filter-bar-v2__search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="search" id="search-input" class="filter-bar-v2__input" placeholder="Buscar agrupación, título…" autocomplete="off" />
+      </div>
+      <div class="filter-bar-v2__selects">
+        <div class="filter-select-wrap">
+          <select id="municipio-select" class="filter-bar-v2__select"><option value="">Todos los municipios</option></select>
+        </div>
+        <div class="filter-select-wrap">
+          <select id="año-select" class="filter-bar-v2__select"><option value="">Todos los años</option></select>
+        </div>
+        <div class="filter-select-wrap">
+          <select id="tipo-select" class="filter-bar-v2__select">
+            <option value="">Todos los tipos</option>
+            <option value="comparsa">Comparsa</option>
+            <option value="chirigota">Chirigota</option>
+            <option value="cuarteto">Cuarteto</option>
+            <option value="coro">Coro</option>
+            <option value="romancero">Romancero</option>
+          </select>
+        </div>
+        <button class="filter-bar-v2__btn-clear" id="clear-filters-btn" aria-label="Limpiar filtros">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          Limpiar
+        </button>
+      </div>
+      <span class="filter-bar-v2__count" id="results-count" aria-live="polite"></span>
+    </div>
+  </div>
+
+  <!-- VIDEO GRID -->
+  <section class="section section-dark">
+    <div class="container">
+      <div id="videos-container" class="video-grid-v2" role="list" aria-label="Galería de vídeos"></div>
+
+      <div id="empty-state" class="empty-v2" hidden>
+        <div class="empty-v2__icon">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+        </div>
+        <p class="empty-v2__title">Sin vídeos</p>
+        <p class="empty-v2__desc">No hay vídeos que coincidan con los filtros actuales.</p>
+        <button class="btn btn-outline" id="empty-clear-btn">Ver todos los vídeos</button>
+      </div>
+
+      <div id="loading-state" class="loading-v2">
+        <div class="loading-v2__dots"><span></span><span></span><span></span></div>
+        <span>Cargando vídeos…</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div id="footer-placeholder"></div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  let allVideos = [], filtered = [];
+
+  const videosEl       = document.getElementById('videos-container');
+  const emptyState     = document.getElementById('empty-state');
+  const loadingState   = document.getElementById('loading-state');
+  const resultsCount   = document.getElementById('results-count');
+  const statTotal      = document.getElementById('stat-total');
+  const searchInput    = document.getElementById('search-input');
+  const municipioSelect= document.getElementById('municipio-select');
+  const añoSelect      = document.getElementById('año-select');
+  const tipoSelect     = document.getElementById('tipo-select');
+  const clearBtn       = document.getElementById('clear-filters-btn');
+  const emptyClearBtn  = document.getElementById('empty-clear-btn');
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    if (typeof initPage === 'function') initPage();
+    await loadData();
+    bindFilters();
+  });
+
+  async function loadData() {
+    showLoading(true);
+    try {
+      const [videos, municipios] = await Promise.all([DataAPI.getVideos({}), DataAPI.getMunicipios()]);
+      allVideos = videos || [];
+      if (statTotal) statTotal.textContent = allVideos.length || '0';
+      populateMunicipioSelect(municipios || []);
+      populateAñoSelect(allVideos);
+      applyFilters();
+    } catch(err) {
+      console.error(err);
+      showLoading(false);
+      showEmpty(true);
+    }
+  }
+
+  function populateMunicipioSelect(municipios) {
+    municipios.forEach(m => { const o = document.createElement('option'); o.value = m.slug; o.textContent = m.nombre; municipioSelect.appendChild(o); });
+  }
+  function populateAñoSelect(videos) {
+    [...new Set(videos.map(v=>v.año).filter(Boolean))].sort((a,b)=>b-a).forEach(a => { const o = document.createElement('option'); o.value=a; o.textContent=a; añoSelect.appendChild(o); });
+  }
+
+  function bindFilters() {
+    let timer;
+    searchInput.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(applyFilters, 280); });
+    municipioSelect.addEventListener('change', applyFilters);
+    añoSelect.addEventListener('change', applyFilters);
+    tipoSelect.addEventListener('change', applyFilters);
+    clearBtn.addEventListener('click', clearFilters);
+    emptyClearBtn.addEventListener('click', clearFilters);
+  }
+
+  function clearFilters() {
+    searchInput.value=''; municipioSelect.value=''; añoSelect.value=''; tipoSelect.value='';
+    applyFilters();
+  }
+
+  function applyFilters() {
+    const q = searchInput.value.toLowerCase().trim();
+    const mv = municipioSelect.value, av = añoSelect.value, tv = tipoSelect.value;
+    filtered = allVideos.filter(v => {
+      if (mv && v.municipio_slug !== mv) return false;
+      if (av && String(v.año) !== String(av)) return false;
+      if (tv && v.tipo !== tv) return false;
+      if (q && ![v.titulo, v.agrupacion_nombre, String(v.año), v.municipio].join(' ').toLowerCase().includes(q)) return false;
+      return true;
+    });
+    renderVideos(filtered);
+    updateCount(filtered.length, allVideos.length);
+  }
+
+  function extractYTId(url) {
+    if (!url) return null;
+    for (const re of [/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([A-Za-z0-9_-]{11})/, /youtube\.com\/shorts\/([A-Za-z0-9_-]{11})/]) {
+      const m = url.match(re); if (m) return m[1];
+    }
+    return null;
+  }
+
+  function renderVideos(videos) {
+    showLoading(false);
+    videosEl.innerHTML = '';
+    if (!videos.length) { showEmpty(true); return; }
+    showEmpty(false);
+    videos.forEach(v => videosEl.appendChild(buildCard(v)));
+  }
+
+  function buildCard(video) {
+    const card = document.createElement('div');
+    card.className = 'video-card-v2';
+    card.setAttribute('role','listitem');
+
+    const url  = video.url || video.youtube_url || '';
+    const ytId = extractYTId(url);
+    const isYT = /youtu\.?be/.test(url) && !!ytId;
+
+    const thumb = document.createElement('div');
+    thumb.className = 'video-card-v2__thumb';
+
+    if (isYT) {
+      const img = document.createElement('img');
+      img.src = `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg`;
+      img.alt = `Vista previa: ${video.agrupacion_nombre||'Vídeo'}`;
+      img.loading = 'lazy'; img.decoding = 'async';
+      img.className = 'video-card-v2__thumb-img';
+
+      const play = document.createElement('button');
+      play.className = 'video-card-v2__play';
+      play.setAttribute('aria-label', `Reproducir: ${video.agrupacion_nombre||'Vídeo'}`);
+      play.innerHTML = `<svg width="48" height="48" viewBox="0 0 48 48"><circle cx="24" cy="24" r="24" fill="rgba(0,0,0,0.6)"/><polygon points="19,14 37,24 19,34" fill="#fff"/></svg>`;
+
+      thumb.appendChild(img);
+      thumb.appendChild(play);
+
+      function loadYT() {
+        thumb.innerHTML = '';
+        const iframe = document.createElement('iframe');
+        iframe.src = `https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0`;
+        iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+        iframe.allowFullscreen = true; iframe.loading = 'lazy';
+        iframe.className = 'video-card-v2__iframe';
+        iframe.setAttribute('title', video.agrupacion_nombre||'Vídeo del carnaval');
+        thumb.appendChild(iframe);
+        thumb.classList.add('video-card-v2__thumb--active');
+      }
+      play.addEventListener('click', loadYT);
+      img.addEventListener('click', loadYT);
+    } else if (url) {
+      const iframe = document.createElement('iframe');
+      iframe.src = url; iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+      iframe.allowFullscreen = true; iframe.loading = 'lazy';
+      iframe.className = 'video-card-v2__iframe';
+      iframe.setAttribute('title', video.agrupacion_nombre||'Vídeo del carnaval');
+      thumb.appendChild(iframe);
+      thumb.classList.add('video-card-v2__thumb--active');
+    } else {
+      thumb.innerHTML = `<div class="video-card-v2__placeholder"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>`;
+    }
+
+    const TIPO_COLORS = { comparsa:'--blue', chirigota:'--pink', cuarteto:'--yellow', coro:'--green', romancero:'--orange' };
+    const tipoColor = video.tipo ? (TIPO_COLORS[video.tipo.toLowerCase()] || '--blue') : '--blue';
+
+    const info = document.createElement('div');
+    info.className = 'video-card-v2__info';
+    info.innerHTML = `
+      <div class="video-card-v2__meta">
+        ${video.tipo ? `<span class="video-badge-v2" style="background:color-mix(in srgb, var(${tipoColor}) 15%, transparent);color:var(${tipoColor})">${esc(video.tipo)}</span>` : ''}
+        ${video.año ? `<span class="video-card-v2__year">${video.año}</span>` : ''}
+      </div>
+      <h3 class="video-card-v2__title">${esc(video.agrupacion_nombre||video.titulo||'Sin título')}</h3>
+      ${video.municipio ? `<p class="video-card-v2__place"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${esc(video.municipio)}</p>` : ''}
+      ${video.titulo && video.titulo !== video.agrupacion_nombre ? `<p class="video-card-v2__subtitle">${esc(video.titulo)}</p>` : ''}
+    `;
+
+    card.appendChild(thumb);
+    card.appendChild(info);
+    return card;
+  }
+
+  function updateCount(shown, total) {
+    if (!resultsCount) return;
+    resultsCount.textContent = shown===total
+      ? `${total} ${total===1?'vídeo':'vídeos'}`
+      : `${shown} de ${total} ${total===1?'vídeo':'vídeos'}`;
+  }
+
+  function showLoading(show) { loadingState.hidden = !show; }
+  function showEmpty(show) { emptyState.hidden = !show; videosEl.hidden = show; }
+  function esc(str) { return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+}());
+</script>
+</body>
+</html>

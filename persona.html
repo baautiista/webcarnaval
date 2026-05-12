@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Componente — Archivo del Carnaval del Campo de Gibraltar</title>
+  <meta name="description" content="Ficha detallada de componente del Archivo del Carnaval del Campo de Gibraltar." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    .roles-list { display: flex; flex-direction: column; gap: 10px; max-width: 700px; }
+    .role-row {
+      display: flex; align-items: center; gap: 14px;
+      background: var(--dark2);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 14px 20px;
+    }
+    .role-row__year {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--blue);
+      min-width: 52px;
+      flex-shrink: 0;
+    }
+    .role-row__ag {
+      flex: 1;
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--white);
+    }
+    .role-row__mun {
+      font-family: var(--font-sans);
+      font-size: 12px;
+      color: var(--gray3);
+    }
+    .role-row__badge {
+      background: rgba(57,134,255,0.12);
+      color: var(--blue);
+      border-radius: 20px;
+      padding: 3px 12px;
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="navbar-placeholder"></div>
+
+  <main id="main-content">
+
+    <!-- PAGE HERO (breadcrumb) -->
+    <section class="page-hero page-hero--componente" id="page-hero">
+      <div class="page-hero__inner container">
+        <div class="page-hero__breadcrumb" id="breadcrumb">
+          <a href="index.html">Inicio</a>
+          <span class="breadcrumb-sep" aria-hidden="true">&#8250;</span>
+          <a href="componentes.html">Componentes</a>
+          <span class="breadcrumb-sep" aria-hidden="true">&#8250;</span>
+          <span id="breadcrumb-name">Cargando…</span>
+        </div>
+      </div>
+      <div class="page-hero__accent" aria-hidden="true"></div>
+    </section>
+
+    <!-- LOADING STATE -->
+    <div id="loading-state" class="section-container container">
+      <div class="loading-state">
+        <div class="spinner" role="status" aria-label="Cargando componente…">
+          <div class="spinner__ring"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 404 STATE -->
+    <div id="not-found-state" class="section-container container" hidden>
+      <div class="empty-state empty-state--404">
+        <div class="empty-state__icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" width="72" height="72"
+               viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"
+               stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+        </div>
+        <h1 class="empty-state__title">Componente no encontrado</h1>
+        <p class="empty-state__text" id="not-found-text">No existe ningún componente con el identificador proporcionado en nuestro archivo.</p>
+        <a href="componentes.html" class="btn btn--primary">Volver a Componentes</a>
+      </div>
+    </div>
+
+    <!-- PERSONA CONTENT (hidden until loaded) -->
+    <div id="persona-content" hidden>
+
+      <!-- PERSONA HEADER -->
+      <section class="persona-header" id="persona-header">
+        <div class="container persona-header__inner">
+          <div class="persona-header__avatar-wrap">
+            <div class="persona-header__avatar" id="persona-avatar">
+              <!-- Filled by JS: img or SVG icon -->
+            </div>
+          </div>
+          <div class="persona-header__info">
+            <span class="role-badge role-badge--componente" id="role-badge">Componente</span>
+            <h1 class="persona-header__name" id="persona-name">—</h1>
+            <p class="persona-header__bio" id="persona-bio"></p>
+            <div class="persona-header__meta" id="persona-meta">
+              <!-- Injected: localidad, agrupaciones count, etc. -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PARTICIPACIONES CON ROL (desde Supabase) -->
+      <section class="detail-section" id="section-roles" hidden>
+        <div class="container">
+          <div class="section-header">
+            <h2 class="section-title">
+              <span class="section-title__accent" aria-hidden="true">—</span>
+              Participaciones registradas
+            </h2>
+            <p class="section-subtitle">Agrupaciones e instrumento/voz en cada edición</p>
+          </div>
+          <div id="roles-list" class="roles-list"></div>
+        </div>
+      </section>
+
+      <!-- AGRUPACIONES EN LAS QUE PARTICIPA -->
+      <section class="detail-section" id="section-agrupaciones">
+        <div class="container">
+          <div class="section-header">
+            <h2 class="section-title">
+              <span class="section-title__accent" aria-hidden="true">—</span>
+              Agrupaciones en las que participa
+            </h2>
+            <p class="section-subtitle" id="agrupaciones-subtitle"></p>
+          </div>
+          <div class="agrupaciones-grid" id="agrupaciones-grid" role="list">
+            <!-- Injected by JS -->
+          </div>
+          <div class="empty-subsection" id="agrupaciones-empty" hidden>
+            <p>Este componente aún no tiene agrupaciones registradas en el archivo.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- FOTOGRAFÍAS -->
+      <section class="detail-section detail-section--dark" id="section-fotos">
+        <div class="container">
+          <div class="section-header">
+            <h2 class="section-title">
+              <span class="section-title__accent" aria-hidden="true">—</span>
+              Fotografías
+            </h2>
+            <p class="section-subtitle" id="fotos-subtitle"></p>
+          </div>
+          <div class="masonry-gallery" id="fotos-gallery">
+            <!-- Injected by JS -->
+          </div>
+          <div class="empty-subsection" id="fotos-empty" hidden>
+            <p>No hay fotografías disponibles para este componente.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- VÍDEOS -->
+      <section class="detail-section" id="section-videos">
+        <div class="container">
+          <div class="section-header">
+            <h2 class="section-title">
+              <span class="section-title__accent" aria-hidden="true">—</span>
+              Vídeos
+            </h2>
+            <p class="section-subtitle" id="videos-subtitle"></p>
+          </div>
+          <div class="video-grid" id="videos-grid">
+            <!-- Injected by JS -->
+          </div>
+          <div class="empty-subsection" id="videos-empty" hidden>
+            <p>No hay vídeos disponibles para este componente.</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+    <!-- /persona-content -->
+
+  </main>
+
+  <div id="footer-placeholder"></div>
+
+  <div id="toast-container" class="toast-container" aria-live="assertive" aria-atomic="true"></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      // ----------------------------------------------------------------
+      // URL PARAMS
+      // ----------------------------------------------------------------
+      function getParam(name) {
+        var params = new URLSearchParams(window.location.search);
+        return params.get(name) || '';
+      }
+
+      // ----------------------------------------------------------------
+      // DOM REFS
+      // ----------------------------------------------------------------
+      var loadingState      = document.getElementById('loading-state');
+      var notFoundState     = document.getElementById('not-found-state');
+      var notFoundText      = document.getElementById('not-found-text');
+      var personaContent    = document.getElementById('persona-content');
+      var breadcrumbName    = document.getElementById('breadcrumb-name');
+      var personaAvatar     = document.getElementById('persona-avatar');
+      var roleBadge         = document.getElementById('role-badge');
+      var personaName       = document.getElementById('persona-name');
+      var personaBio        = document.getElementById('persona-bio');
+      var personaMeta       = document.getElementById('persona-meta');
+      var agrupacionesGrid  = document.getElementById('agrupaciones-grid');
+      var agrupacionesSub   = document.getElementById('agrupaciones-subtitle');
+      var agrupacionesEmpty = document.getElementById('agrupaciones-empty');
+      var fotosGallery      = document.getElementById('fotos-gallery');
+      var fotosSub          = document.getElementById('fotos-subtitle');
+      var fotosEmpty        = document.getElementById('fotos-empty');
+      var videosGrid        = document.getElementById('videos-grid');
+      var videosSub         = document.getElementById('videos-subtitle');
+      var videosEmpty       = document.getElementById('videos-empty');
+
+      // ----------------------------------------------------------------
+      // HELPERS
+      // ----------------------------------------------------------------
+      function show(el) { if (el) el.hidden = false; }
+      function hide(el) { if (el) el.hidden = true; }
+
+      function escHtml(str) {
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      // ----------------------------------------------------------------
+      // RENDER AVATAR
+      // ----------------------------------------------------------------
+      function renderAvatar(persona) {
+        if (!personaAvatar) return;
+        var foto = persona.foto || persona.imagen || persona.avatar || '';
+        if (foto) {
+          var img = document.createElement('img');
+          img.src = foto;
+          img.alt = 'Fotografía de ' + (persona.nombre || '');
+          img.className = 'persona-header__avatar-img';
+          img.loading = 'lazy';
+          img.onerror = function () {
+            personaAvatar.innerHTML = '';
+            renderDefaultAvatar();
+          };
+          personaAvatar.appendChild(img);
+        } else {
+          renderDefaultAvatar();
+        }
+      }
+
+      function renderDefaultAvatar() {
+        if (!personaAvatar) return;
+        if (typeof iconUser === 'function') {
+          personaAvatar.innerHTML = iconUser('persona-header__avatar-svg');
+        } else {
+          personaAvatar.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="persona-header__avatar-svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>';
+        }
+      }
+
+      // ----------------------------------------------------------------
+      // RENDER META
+      // ----------------------------------------------------------------
+      function renderMeta(persona) {
+        if (!personaMeta) return;
+        var parts = [];
+
+        if (persona.localidad) {
+          parts.push('<span class="persona-meta__item"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>' + escHtml(persona.localidad) + '</span>');
+        }
+        if (persona.municipio && persona.municipio !== persona.localidad) {
+          parts.push('<span class="persona-meta__item">' + escHtml(persona.municipio) + '</span>');
+        }
+        if (persona.voz || persona.instrumento) {
+          var rol = persona.voz || persona.instrumento;
+          parts.push('<span class="persona-meta__item"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>' + escHtml(rol) + '</span>');
+        }
+        if (persona.anyo_inicio || persona.inicio) {
+          var yr = persona.anyo_inicio || persona.inicio;
+          if (typeof iconCalendar === 'function') {
+            parts.push('<span class="persona-meta__item">' + iconCalendar() + 'Desde ' + escHtml(String(yr)) + '</span>');
+          } else {
+            parts.push('<span class="persona-meta__item">Desde ' + escHtml(String(yr)) + '</span>');
+          }
+        }
+
+        personaMeta.innerHTML = parts.join('');
+      }
+
+      // ----------------------------------------------------------------
+      // RENDER AGRUPACIONES
+      // ----------------------------------------------------------------
+      function renderAgrupacionCards(agrupaciones) {
+        if (!agrupacionesGrid) return;
+        agrupacionesGrid.innerHTML = '';
+
+        if (!agrupaciones || agrupaciones.length === 0) {
+          show(agrupacionesEmpty);
+          if (agrupacionesSub) agrupacionesSub.textContent = '';
+          return;
+        }
+
+        hide(agrupacionesEmpty);
+        if (agrupacionesSub) {
+          agrupacionesSub.textContent = agrupaciones.length === 1
+            ? '1 agrupación registrada'
+            : agrupaciones.length + ' agrupaciones registradas';
+        }
+
+        agrupaciones.forEach(function (ag) {
+          if (typeof renderAgrupacionCard === 'function') {
+            var card = renderAgrupacionCard(ag);
+            if (card) {
+              card.setAttribute('role', 'listitem');
+              agrupacionesGrid.appendChild(card);
+            }
+          } else {
+            var div = document.createElement('article');
+            div.className = 'agrupacion-card agrupacion-card--fallback';
+            div.innerHTML = '<h3 class="agrupacion-card__title">' + escHtml(ag.nombre || ag.name || 'Agrupación') + '</h3>'
+              + (ag.modalidad ? '<p class="agrupacion-card__type">' + escHtml(ag.modalidad) + '</p>' : '')
+              + (ag.anyo ? '<p class="agrupacion-card__year">' + escHtml(String(ag.anyo)) + '</p>' : '');
+            agrupacionesGrid.appendChild(div);
+          }
+        });
+      }
+
+      // ----------------------------------------------------------------
+      // RENDER FOTOS
+      // ----------------------------------------------------------------
+      function renderFotos(fotos) {
+        if (!fotosGallery) return;
+        fotosGallery.innerHTML = '';
+
+        if (!fotos || fotos.length === 0) {
+          show(fotosEmpty);
+          if (fotosSub) fotosSub.textContent = '';
+          return;
+        }
+
+        hide(fotosEmpty);
+        if (fotosSub) {
+          fotosSub.textContent = fotos.length === 1
+            ? '1 fotografía disponible'
+            : fotos.length + ' fotografías disponibles';
+        }
+
+        fotos.forEach(function (foto, idx) {
+          var src   = typeof foto === 'string' ? foto : (foto.url || foto.src || foto.path || '');
+          var title = typeof foto === 'object' ? (foto.titulo || foto.title || '') : '';
+          var agNombre = typeof foto === 'object' ? (foto.agrupacion || '') : '';
+
+          var item = document.createElement('figure');
+          item.className = 'masonry-item';
+
+          var img = document.createElement('img');
+          img.src = src;
+          img.alt = title || ('Fotografía ' + (idx + 1));
+          img.loading = 'lazy';
+          img.className = 'masonry-item__img';
+          img.onerror = function () {
+            item.classList.add('masonry-item--broken');
+            img.style.display = 'none';
+          };
+          item.appendChild(img);
+
+          if (title || agNombre) {
+            var cap = document.createElement('figcaption');
+            cap.className = 'masonry-item__caption';
+            cap.textContent = title || agNombre;
+            item.appendChild(cap);
+          }
+
+          item.addEventListener('click', function () {
+            openLightbox(fotos, idx);
+          });
+
+          fotosGallery.appendChild(item);
+        });
+      }
+
+      // ----------------------------------------------------------------
+      // RENDER VIDEOS
+      // ----------------------------------------------------------------
+      function renderVideos(videos) {
+        if (!videosGrid) return;
+        videosGrid.innerHTML = '';
+
+        if (!videos || videos.length === 0) {
+          show(videosEmpty);
+          if (videosSub) videosSub.textContent = '';
+          return;
+        }
+
+        hide(videosEmpty);
+        if (videosSub) {
+          videosSub.textContent = videos.length === 1
+            ? '1 vídeo disponible'
+            : videos.length + ' vídeos disponibles';
+        }
+
+        videos.forEach(function (video) {
+          var url   = typeof video === 'string' ? video : (video.url || video.src || '');
+          var title = typeof video === 'object' ? (video.titulo || video.title || '') : '';
+          var thumb = typeof video === 'object' ? (video.thumbnail || video.thumb || '') : '';
+
+          var card = document.createElement('article');
+          card.className = 'video-card';
+
+          var youtubeId = extractYouTubeId(url);
+
+          if (youtubeId) {
+            var embedUrl = 'https://www.youtube.com/embed/' + youtubeId + '?rel=0&modestbranding=1';
+            card.innerHTML = '<div class="video-card__embed-wrap">'
+              + '<iframe src="' + escHtml(embedUrl) + '" title="' + escHtml(title || 'Vídeo') + '" '
+              + 'frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" '
+              + 'allowfullscreen class="video-card__iframe" loading="lazy"></iframe>'
+              + '</div>'
+              + (title ? '<p class="video-card__title">' + escHtml(title) + '</p>' : '');
+          } else {
+            card.innerHTML = '<div class="video-card__thumb-wrap">'
+              + (thumb ? '<img src="' + escHtml(thumb) + '" alt="' + escHtml(title || 'Vídeo') + '" class="video-card__thumb" loading="lazy" />' : '<div class="video-card__thumb-placeholder"><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg></div>')
+              + '<a href="' + escHtml(url) + '" class="video-card__play-btn" target="_blank" rel="noopener noreferrer" aria-label="Ver vídeo">'
+              + '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>'
+              + '</a>'
+              + '</div>'
+              + (title ? '<p class="video-card__title">' + escHtml(title) + '</p>' : '');
+          }
+
+          videosGrid.appendChild(card);
+        });
+      }
+
+      function extractYouTubeId(url) {
+        if (!url) return null;
+        var match = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+        return match ? match[1] : null;
+      }
+
+      // ----------------------------------------------------------------
+      // LIGHTBOX
+      // ----------------------------------------------------------------
+      var lightboxIndex = 0;
+      var lightboxFotos = [];
+
+      function openLightbox(fotos, idx) {
+        lightboxFotos = fotos;
+        lightboxIndex = idx;
+
+        var existing = document.getElementById('lightbox-overlay');
+        if (existing) existing.remove();
+
+        var overlay = document.createElement('div');
+        overlay.id = 'lightbox-overlay';
+        overlay.className = 'lightbox-overlay';
+        overlay.setAttribute('role', 'dialog');
+        overlay.setAttribute('aria-modal', 'true');
+        overlay.setAttribute('aria-label', 'Visor de fotografías');
+
+        overlay.innerHTML = '<button class="lightbox-close" aria-label="Cerrar visor">'
+          + '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>'
+          + '</button>'
+          + '<button class="lightbox-prev" aria-label="Anterior">'
+          + '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>'
+          + '</button>'
+          + '<div class="lightbox-img-wrap"><img class="lightbox-img" src="" alt="" /></div>'
+          + '<button class="lightbox-next" aria-label="Siguiente">'
+          + '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>'
+          + '</button>'
+          + '<p class="lightbox-counter"></p>';
+
+        document.body.appendChild(overlay);
+        document.body.classList.add('lightbox-open');
+        updateLightbox();
+
+        overlay.querySelector('.lightbox-close').addEventListener('click', closeLightbox);
+        overlay.querySelector('.lightbox-prev').addEventListener('click', prevPhoto);
+        overlay.querySelector('.lightbox-next').addEventListener('click', nextPhoto);
+        overlay.addEventListener('click', function (e) { if (e.target === overlay) closeLightbox(); });
+
+        document.addEventListener('keydown', lightboxKeyHandler);
+      }
+
+      function updateLightbox() {
+        var overlay = document.getElementById('lightbox-overlay');
+        if (!overlay) return;
+        var foto = lightboxFotos[lightboxIndex];
+        var src  = typeof foto === 'string' ? foto : (foto.url || foto.src || foto.path || '');
+        var alt  = typeof foto === 'object' ? (foto.titulo || foto.title || '') : '';
+        overlay.querySelector('.lightbox-img').src = src;
+        overlay.querySelector('.lightbox-img').alt = alt || ('Fotografía ' + (lightboxIndex + 1));
+        overlay.querySelector('.lightbox-counter').textContent = (lightboxIndex + 1) + ' / ' + lightboxFotos.length;
+        overlay.querySelector('.lightbox-prev').hidden = lightboxIndex === 0;
+        overlay.querySelector('.lightbox-next').hidden = lightboxIndex === lightboxFotos.length - 1;
+      }
+
+      function closeLightbox() {
+        var overlay = document.getElementById('lightbox-overlay');
+        if (overlay) overlay.remove();
+        document.body.classList.remove('lightbox-open');
+        document.removeEventListener('keydown', lightboxKeyHandler);
+      }
+
+      function prevPhoto() { if (lightboxIndex > 0) { lightboxIndex--; updateLightbox(); } }
+      function nextPhoto() { if (lightboxIndex < lightboxFotos.length - 1) { lightboxIndex++; updateLightbox(); } }
+
+      function lightboxKeyHandler(e) {
+        if (e.key === 'Escape')      closeLightbox();
+        if (e.key === 'ArrowLeft')   prevPhoto();
+        if (e.key === 'ArrowRight')  nextPhoto();
+      }
+
+      // ----------------------------------------------------------------
+      // COLLECT MEDIA FROM AGRUPACIONES
+      // ----------------------------------------------------------------
+      function collectMedia(agrupaciones) {
+        var fotos  = [];
+        var videos = [];
+        agrupaciones.forEach(function (ag) {
+          var fArr = ag.fotografias || ag.fotos || ag.imagenes || [];
+          var vArr = ag.videos || ag.video || [];
+          if (!Array.isArray(fArr)) fArr = [fArr].filter(Boolean);
+          if (!Array.isArray(vArr)) vArr = [vArr].filter(Boolean);
+          fArr.forEach(function (f) {
+            fotos.push(typeof f === 'string' ? { url: f, agrupacion: ag.nombre || '' } : Object.assign({ agrupacion: ag.nombre || '' }, f));
+          });
+          vArr.forEach(function (v) {
+            videos.push(typeof v === 'string' ? { url: v, agrupacion: ag.nombre || '' } : Object.assign({ agrupacion: ag.nombre || '' }, v));
+          });
+        });
+        return { fotos: fotos, videos: videos };
+      }
+
+      // ----------------------------------------------------------------
+      // LOAD AGRUPACIONES FOR PERSONA
+      // ----------------------------------------------------------------
+      function loadAgrupaciones(persona) {
+        var ids = persona.agrupaciones || persona.agrupacion_ids || [];
+        if (!Array.isArray(ids)) ids = [ids].filter(Boolean);
+
+        if (ids.length === 0) return [];
+
+        var result = [];
+        if (typeof DataAPI !== 'undefined' && typeof DataAPI.getAgrupacionById === 'function') {
+          ids.forEach(function (id) {
+            try {
+              var ag = DataAPI.getAgrupacionById(id);
+              if (ag) result.push(ag);
+            } catch (e) {
+              console.warn('Could not load agrupacion', id, e);
+            }
+          });
+        }
+        return result;
+      }
+
+      // ----------------------------------------------------------------
+      // ALSO COLLECT PERSONAL FOTOS & VIDEOS (not just from agrupaciones)
+      // ----------------------------------------------------------------
+      function mergePersonalMedia(persona, agMedia) {
+        var fotos  = agMedia.fotos.slice();
+        var videos = agMedia.videos.slice();
+
+        // Personal photos attached directly to the persona record
+        var pFotos = persona.fotografias || persona.fotos || persona.imagenes || [];
+        var pVids  = persona.videos || persona.video || [];
+        if (!Array.isArray(pFotos)) pFotos = [pFotos].filter(Boolean);
+        if (!Array.isArray(pVids))  pVids  = [pVids].filter(Boolean);
+
+        pFotos.forEach(function (f) {
+          fotos.unshift(typeof f === 'string' ? { url: f, agrupacion: '' } : f);
+        });
+        pVids.forEach(function (v) {
+          videos.unshift(typeof v === 'string' ? { url: v, agrupacion: '' } : v);
+        });
+
+        return { fotos: fotos, videos: videos };
+      }
+
+      // ----------------------------------------------------------------
+      // INIT
+      // ----------------------------------------------------------------
+      function init() {
+        var slug = getParam('slug');
+        var tipo = getParam('tipo') || 'componente';
+
+        // Active page for nav highlight; support both 'componente' and 'componentes'
+        var activePage = tipo === 'componente' ? 'componentes' : tipo + 's';
+
+        if (typeof initPage === 'function') {
+          initPage({ activePage: activePage });
+        }
+
+        // Update breadcrumb back-link based on tipo
+        var backLink = document.querySelector('#breadcrumb a[href="componentes.html"]');
+        if (backLink) {
+          if (tipo === 'componente' || !tipo) {
+            backLink.href = 'componentes.html';
+            backLink.textContent = 'Componentes';
+          }
+        }
+
+        if (!slug) {
+          hide(loadingState);
+          show(notFoundState);
+          return;
+        }
+
+        var persona = null;
+
+        if (typeof DataAPI !== 'undefined' && typeof DataAPI.getComponenteBySlug === 'function') {
+          try {
+            persona = DataAPI.getComponenteBySlug(slug);
+          } catch (e) {
+            console.error('Error loading componente:', e);
+            if (typeof showToast === 'function') {
+              showToast('Error al cargar los datos del componente.', 'error');
+            }
+          }
+        }
+
+        hide(loadingState);
+
+        if (!persona) {
+          if (notFoundText) {
+            notFoundText.textContent = 'No existe ningún componente con el identificador "' + slug + '" en nuestro archivo.';
+          }
+          show(notFoundState);
+          document.title = 'Componente no encontrado — Archivo del Carnaval del Campo de Gibraltar';
+          return;
+        }
+
+        // Update page metadata
+        var nombre = persona.nombre || persona.name || slug;
+        document.title = nombre + ' — Archivo del Carnaval del Campo de Gibraltar';
+
+        if (breadcrumbName) breadcrumbName.textContent = nombre;
+
+        var metaDesc = document.querySelector('meta[name="description"]');
+        if (metaDesc && persona.bio) metaDesc.content = persona.bio.substring(0, 160);
+
+        // Persona header
+        renderAvatar(persona);
+        if (personaName) personaName.textContent = nombre;
+
+        var bio = persona.bio || persona.descripcion || persona.description || '';
+        if (personaBio) {
+          if (bio) {
+            personaBio.textContent = bio;
+          } else {
+            personaBio.hidden = true;
+          }
+        }
+
+        // Role badge
+        var rolLabel = persona.rol || persona.role || persona.tipo || 'Componente';
+        if (roleBadge) roleBadge.textContent = rolLabel;
+
+        renderMeta(persona);
+
+        // Load agrupaciones
+        var agrupaciones = loadAgrupaciones(persona);
+        renderAgrupacionCards(agrupaciones);
+
+        // Collect & merge all media
+        var agMedia = collectMedia(agrupaciones);
+        var allMedia = mergePersonalMedia(persona, agMedia);
+        renderFotos(allMedia.fotos);
+        renderVideos(allMedia.videos);
+
+        // Load participaciones con rol desde Supabase
+        if (typeof DataAPI !== 'undefined' && typeof DataAPI.getComponenteRoles === 'function') {
+          DataAPI.getComponenteRoles(slug).then(function(roles) {
+            if (!roles || !roles.length) return;
+            var sec = document.getElementById('section-roles');
+            var list = document.getElementById('roles-list');
+            if (!sec || !list) return;
+            list.innerHTML = roles.map(function(r) {
+              return '<div class="role-row">'
+                + '<span class="role-row__year">' + escHtml(String(r.ano || '—')) + '</span>'
+                + '<div style="flex:1">'
+                + '<div class="role-row__ag">' + escHtml(r.agrupacion_nombre || '—') + '</div>'
+                + (r.municipio ? '<div class="role-row__mun">' + escHtml(r.municipio) + '</div>' : '')
+                + '</div>'
+                + (r.rol ? '<span class="role-row__badge">' + escHtml(r.rol) + '</span>' : '')
+                + '</div>';
+            }).join('');
+            show(sec);
+          }).catch(function(){});
+        }
+
+        // Also enrich author photo/bio from Supabase autores_extra
+        if (typeof DataAPI !== 'undefined' && typeof DataAPI.getAutorExtra === 'function') {
+          DataAPI.getAutorExtra(slug).then(function(extra) {
+            if (!extra) return;
+            if (extra.foto_url && personaAvatar && !personaAvatar.querySelector('img')) {
+              personaAvatar.innerHTML = '';
+              var img = document.createElement('img');
+              img.src = extra.foto_url;
+              img.alt = nombre;
+              img.className = 'persona-header__avatar-img';
+              img.loading = 'lazy';
+              personaAvatar.appendChild(img);
+            }
+            if (extra.bio && personaBio && !personaBio.textContent) {
+              personaBio.textContent = extra.bio;
+              personaBio.hidden = false;
+            }
+          }).catch(function(){});
+        }
+
+        show(personaContent);
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+
+    }());
+  </script>
+
+</body>
+</html>

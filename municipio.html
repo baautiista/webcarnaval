@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Municipio · Archivo del Carnaval del Campo de Gibraltar</title>
+  <meta name="description" content="Historia y agrupaciones del Carnaval en este municipio del Campo de Gibraltar." />
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    :root { --municipio-color: #3986ff; }
+
+    .page-hero--municipio-detail {
+      position: relative;
+      min-height: 400px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      overflow: hidden;
+    }
+    .page-hero--municipio-detail .page-hero__bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      filter: brightness(0.55);
+      transition: filter 0.3s;
+    }
+    .page-hero--municipio-detail .page-hero__gradient {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%);
+    }
+    .page-hero--municipio-detail .page-hero__inner {
+      position: relative;
+      z-index: 2;
+      padding: 80px 24px 48px;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .page-hero--municipio-detail .page-hero__title {
+      font-family: var(--font-display);
+      font-size: clamp(36px, 6vw, 64px);
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+    .page-hero--municipio-detail .page-hero__subtitle {
+      font-family: var(--font-sans);
+      font-size: 16px;
+      color: rgba(255,255,255,0.75);
+      margin-bottom: 0;
+    }
+    .page-hero--municipio-detail .breadcrumb {
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-sans);
+      font-size: 13px;
+      color: rgba(255,255,255,0.6);
+    }
+    .page-hero--municipio-detail .breadcrumb a { color: rgba(255,255,255,0.6); }
+    .page-hero--municipio-detail .breadcrumb a:hover { color: #fff; }
+    .page-hero--municipio-detail .breadcrumb__current { color: rgba(255,255,255,0.9); }
+
+    /* Color accent strip at the bottom of hero */
+    .page-hero--municipio-detail::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--municipio-color);
+      z-index: 3;
+    }
+
+    /* Section styling with municipio color accents */
+    .section-header__eyebrow { color: var(--municipio-color) !important; }
+    .crono-group__year span {
+      background: var(--municipio-color);
+      color: #fff;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .crono-item__dot {
+      background: var(--municipio-color) !important;
+    }
+
+    /* Sections */
+    .section { padding: 64px 0; }
+    .section--historia { background: var(--body-bg); }
+    .section--agrupaciones { background: var(--white); }
+    .section--autores { background: var(--body-bg); }
+    .section--cronologia { background: var(--white); }
+
+    .section-header { margin-bottom: 32px; }
+    .section-header--row { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+    .section-header__eyebrow {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      display: block;
+    }
+    .section-header__title {
+      font-family: var(--font-display);
+      font-size: clamp(24px, 3vw, 36px);
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .container--text { max-width: 800px; }
+
+    .historia-body p {
+      font-family: var(--font-body);
+      font-size: 17px;
+      line-height: 1.8;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+    }
+
+    .agrupaciones-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+    .agrupaciones-filters { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .filter-input-wrap { position: relative; }
+    .filter-input-wrap--search .filter-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; }
+    .filter-input-wrap--search .filter-input { padding-left: 32px; }
+    .filter-input { border: 1px solid var(--border); border-radius: 8px; background: var(--white); color: var(--text-primary); font-family: var(--font-sans); padding: 8px 12px; outline: none; font-size: 13px; }
+    .filter-input--sm { font-size: 12px; padding: 6px 10px; }
+    .filter-input:focus { border-color: var(--municipio-color); }
+    .filter-select { border: 1px solid var(--border); border-radius: 8px; background: var(--white); color: var(--text-primary); font-family: var(--font-sans); padding: 8px 12px; outline: none; font-size: 13px; }
+    .filter-select--sm { font-size: 12px; padding: 6px 10px; }
+    .filter-select:focus { border-color: var(--municipio-color); }
+
+    .results-meta__count { font-family: var(--font-sans); font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+
+    .autores-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+    .autor-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--card-radius); padding: 20px; display: flex; align-items: center; gap: 14px; }
+    .autor-card__avatar { width: 48px; height: 48px; border-radius: 50%; background: rgba(57,134,255,0.1); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .autor-card__initials { font-family: var(--font-sans); font-size: 16px; font-weight: 700; color: var(--municipio-color); }
+    .autor-card__name { font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--text-primary); }
+    .autor-card__meta { font-family: var(--font-sans); font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+    /* Cronologia */
+    .cronologia-list { position: relative; padding-left: 24px; }
+    .cronologia-list::before {
+      content: '';
+      position: absolute;
+      left: 7px; top: 0; bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--municipio-color), rgba(0,0,0,0.05));
+    }
+    .crono-group { margin-bottom: 32px; }
+    .crono-group__year {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+      margin-left: -24px;
+    }
+    .crono-group__list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+    .crono-item { display: flex; align-items: flex-start; gap: 12px; }
+    .crono-item__dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+    .crono-item__body { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
+    .crono-item__name { font-family: var(--font-display); font-size: 14px; font-weight: 600; color: var(--text-primary); }
+    .crono-item__autor { font-family: var(--font-sans); font-size: 12px; color: var(--text-muted); }
+    .crono-item__premio { font-family: var(--font-sans); font-size: 11px; color: #a07800; display: flex; align-items: center; gap: 3px; }
+
+    .loading-state--page { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 16px; padding: 120px 24px; font-family: var(--font-sans); font-size: 14px; color: var(--text-muted); }
+    .loading-spinner { width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--municipio-color); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .not-found { padding: 80px 24px; text-align: center; }
+    .not-found__inner { max-width: 480px; margin: 0 auto; }
+    .not-found__code { font-family: var(--font-display); font-size: 80px; font-weight: 900; color: var(--border); display: block; line-height: 1; }
+    .not-found__title { font-family: var(--font-display); font-size: 28px; font-weight: 700; color: var(--text-primary); margin-bottom: 12px; }
+    .not-found__text { font-family: var(--font-sans); font-size: 15px; color: var(--text-muted); margin-bottom: 24px; }
+
+    .empty-state { padding: 32px; text-align: center; }
+    .empty-state__text { font-family: var(--font-sans); font-size: 14px; color: var(--text-muted); }
+  </style>
+</head>
+<body>
+
+  <div id="navbar-placeholder"></div>
+
+  <!-- PAGE HERO (dynamic) -->
+  <section class="page-hero page-hero--municipio-detail" id="municipio-hero">
+    <div class="page-hero__bg" id="hero-bg"></div>
+    <div class="page-hero__inner">
+      <!-- BREADCRUMB -->
+      <nav class="breadcrumb" id="breadcrumb" aria-label="Ruta de navegación">
+        <a href="index.html" class="breadcrumb__link">Inicio</a>
+        <svg class="breadcrumb__sep" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        <a href="municipios.html" class="breadcrumb__link">Municipios</a>
+        <svg class="breadcrumb__sep" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        <span class="breadcrumb__current" id="breadcrumb-nombre">Cargando…</span>
+      </nav>
+
+      <h1 class="page-hero__title" id="hero-nombre">Cargando…</h1>
+      <p class="page-hero__subtitle" id="hero-subtitle"></p>
+    </div>
+    <div class="page-hero__gradient"></div>
+  </section>
+
+  <!-- MAIN -->
+  <main class="site-main" id="main-content">
+
+    <!-- LOADING STATE (full page) -->
+    <div id="loading-state" class="loading-state loading-state--page">
+      <div class="loading-spinner"></div>
+      <p>Cargando municipio…</p>
+    </div>
+
+    <!-- NOT FOUND -->
+    <div id="not-found" class="not-found" hidden>
+      <div class="container">
+        <div class="not-found__inner">
+          <span class="not-found__code">404</span>
+          <h2 class="not-found__title">Municipio no encontrado</h2>
+          <p class="not-found__text">El municipio que buscas no existe o la URL es incorrecta.</p>
+          <a href="municipios.html" class="btn btn--primary">Ver todos los municipios</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE BODY (hidden until loaded) -->
+    <div id="page-body" hidden>
+
+      <!-- ── HISTORIA ──────────────────────────────────────── -->
+      <section class="section section--historia" id="section-historia">
+        <div class="container container--text">
+          <div class="section-header">
+            <span class="section-header__eyebrow">Contexto</span>
+            <h2 class="section-header__title">Historia</h2>
+          </div>
+          <div class="historia-body crimson-body" id="historia-text">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ── AGRUPACIONES ──────────────────────────────────── -->
+      <section class="section section--agrupaciones" id="section-agrupaciones">
+        <div class="container">
+          <div class="section-header section-header--row">
+            <div>
+              <span class="section-header__eyebrow">Concurso</span>
+              <h2 class="section-header__title">Agrupaciones</h2>
+            </div>
+            <!-- Local filter -->
+            <div class="agrupaciones-filters" id="agrupaciones-filters">
+              <div class="filter-input-wrap filter-input-wrap--search">
+                <svg class="filter-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input
+                  type="search"
+                  id="ag-search"
+                  class="filter-input filter-input--sm"
+                  placeholder="Buscar agrupación…"
+                  autocomplete="off"
+                />
+              </div>
+              <div class="filter-input-wrap">
+                <select id="ag-tipo" class="filter-select filter-select--sm">
+                  <option value="">Todos los tipos</option>
+                  <option value="comparsa">Comparsa</option>
+                  <option value="chirigota">Chirigota</option>
+                  <option value="cuarteto">Cuarteto</option>
+                  <option value="coro">Coro</option>
+                  <option value="romancero">Romancero</option>
+                </select>
+              </div>
+              <div class="filter-input-wrap">
+                <select id="ag-año" class="filter-select filter-select--sm">
+                  <option value="">Todos los años</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <p class="results-meta__count" id="ag-count"></p>
+
+          <div id="agrupaciones-grid" class="agrupaciones-grid">
+            <!-- Populated by JS -->
+          </div>
+          <div id="agrupaciones-empty" class="empty-state" hidden>
+            <p class="empty-state__text">No hay agrupaciones que coincidan con los filtros.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── AUTORES DESTACADOS ────────────────────────────── -->
+      <section class="section section--autores" id="section-autores">
+        <div class="container">
+          <div class="section-header">
+            <span class="section-header__eyebrow">Talento local</span>
+            <h2 class="section-header__title">Autores destacados</h2>
+          </div>
+          <div id="autores-grid" class="autores-grid">
+            <!-- Populated by JS -->
+          </div>
+          <div id="autores-empty" class="empty-state" hidden>
+            <p class="empty-state__text">No hay autores registrados para este municipio.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── CRONOLOGÍA LOCAL ──────────────────────────────── -->
+      <section class="section section--cronologia" id="section-cronologia">
+        <div class="container container--text">
+          <div class="section-header">
+            <span class="section-header__eyebrow">A lo largo de los años</span>
+            <h2 class="section-header__title">Cronología local</h2>
+          </div>
+          <div id="cronologia-list" class="cronologia-list">
+            <!-- Populated by JS -->
+          </div>
+          <div id="cronologia-empty" class="empty-state" hidden>
+            <p class="empty-state__text">No hay datos cronológicos disponibles.</p>
+          </div>
+        </div>
+      </section>
+
+    </div><!-- /#page-body -->
+
+  </main>
+
+  <div id="footer-placeholder"></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+  (function () {
+    'use strict';
+
+    /* ─── Fallback images from Pexels ───────────────────── */
+    const MUNICIPIO_IMAGES = {
+      'algeciras':                   'https://images.pexels.com/photos/3727255/pexels-photo-3727255.jpeg?auto=compress&cs=tinysrgb&w=1200',
+      'la-linea':                    'https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?auto=compress&cs=tinysrgb&w=1200',
+      'la-linea-de-la-concepcion':   'https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?auto=compress&cs=tinysrgb&w=1200',
+      'san-roque':                   'https://images.pexels.com/photos/2356045/pexels-photo-2356045.jpeg?auto=compress&cs=tinysrgb&w=1200',
+      'los-barrios':                 'https://images.pexels.com/photos/1549200/pexels-photo-1549200.jpeg?auto=compress&cs=tinysrgb&w=1200',
+      'tarifa':                      'https://images.pexels.com/photos/3601452/pexels-photo-3601452.jpeg?auto=compress&cs=tinysrgb&w=1200',
+      'jimena-de-la-frontera':       'https://images.pexels.com/photos/2790396/pexels-photo-2790396.jpeg?auto=compress&cs=tinysrgb&w=1200',
+      'castellar-de-la-frontera':    'https://images.pexels.com/photos/3155666/pexels-photo-3155666.jpeg?auto=compress&cs=tinysrgb&w=1200'
+    };
+    const DEFAULT_IMG = 'https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?auto=compress&cs=tinysrgb&w=1200';
+
+    /* ─── State ─────────────────────────────────────────── */
+    let municipio    = null;
+    let agrupaciones = [];
+    let filteredAgs  = [];
+
+    /* ─── DOM refs ───────────────────────────────────────── */
+    const heroBg          = document.getElementById('hero-bg');
+    const heroNombre      = document.getElementById('hero-nombre');
+    const heroSubtitle    = document.getElementById('hero-subtitle');
+    const breadcrumbNom   = document.getElementById('breadcrumb-nombre');
+    const historiaText    = document.getElementById('historia-text');
+    const agrupacionesGrid = document.getElementById('agrupaciones-grid');
+    const agrupacionesEmpty = document.getElementById('agrupaciones-empty');
+    const agCount         = document.getElementById('ag-count');
+    const agSearch        = document.getElementById('ag-search');
+    const agTipo          = document.getElementById('ag-tipo');
+    const agAño           = document.getElementById('ag-año');
+    const autoresGrid     = document.getElementById('autores-grid');
+    const autoresEmpty    = document.getElementById('autores-empty');
+    const cronologiaList  = document.getElementById('cronologia-list');
+    const cronologiaEmpty = document.getElementById('cronologia-empty');
+    const loadingState    = document.getElementById('loading-state');
+    const notFound        = document.getElementById('not-found');
+    const pageBody        = document.getElementById('page-body');
+
+    /* ─── Boot ───────────────────────────────────────────── */
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (typeof initPage === 'function') initPage();
+
+      const slug = getSlugFromURL();
+      if (!slug) { showNotFound(); return; }
+
+      await loadPage(slug);
+    });
+
+    /* ─── URL parsing ────────────────────────────────────── */
+    function getSlugFromURL () {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('slug') || '';
+    }
+
+    /* ─── Data ───────────────────────────────────────────── */
+    async function loadPage (slug) {
+      try {
+        const [mun, ags, munExtra] = await Promise.all([
+          DataAPI.getMunicipioBySlug(slug),
+          DataAPI.getAgrupaciones({ municipio: slug }),
+          DataAPI.getMunicipioExtra(slug).catch(() => null)
+        ]);
+
+        if (!mun) { showNotFound(); return; }
+
+        // Merge DB extra data over CSV defaults
+        if (munExtra) {
+          if (munExtra.descripcion) mun.historia = munExtra.descripcion;
+          if (munExtra.foto_url) mun.imagen = munExtra.foto_url;
+          if (munExtra.color) mun.color = munExtra.color;
+        }
+
+        municipio    = mun;
+        agrupaciones = ags || [];
+        filteredAgs  = [...agrupaciones];
+
+        applyMunicipioColor(mun.color);
+        renderHero();
+        renderHistoria();
+        populateAgAñoSelect();
+        renderAgrupaciones(agrupaciones);
+        renderAutores(agrupaciones);
+        renderCronologia(agrupaciones);
+        bindAgFilters();
+
+        loadingState.hidden = true;
+        pageBody.hidden = false;
+
+        /* Update <title> */
+        document.title = `${mun.nombre} · Archivo del Carnaval del Campo de Gibraltar`;
+        /* Update meta description */
+        const metaDesc = document.querySelector('meta[name="description"]');
+        if (metaDesc) metaDesc.content = `Historia y agrupaciones del Carnaval en ${mun.nombre}, Campo de Gibraltar.`;
+      } catch (err) {
+        console.error('Error cargando municipio:', err);
+        showNotFound();
+      }
+    }
+
+    /* ─── Apply municipio color theming ─────────────────── */
+    function applyMunicipioColor(color) {
+      if (!color) return;
+      document.documentElement.style.setProperty('--municipio-color', color);
+      // Apply to hero elements via inline style
+      const hero = document.getElementById('municipio-hero');
+      if (hero) {
+        hero.style.setProperty('--municipio-color', color);
+      }
+    }
+
+    /* ─── Hero ───────────────────────────────────────────── */
+    function renderHero () {
+      const slug = municipio.slug || slugify(municipio.nombre);
+      const img  = municipio.imagen || MUNICIPIO_IMAGES[slug] || DEFAULT_IMG;
+      const count = agrupaciones.length;
+      const color = municipio.color || '#3986ff';
+
+      heroBg.style.backgroundImage  = `url('${img}')`;
+      heroNombre.textContent         = municipio.nombre;
+      heroSubtitle.textContent       = `${count} ${count === 1 ? 'agrupación registrada' : 'agrupaciones registradas'}`;
+      breadcrumbNom.textContent      = municipio.nombre;
+
+      // Apply color accent to the hero strip and spinner
+      document.documentElement.style.setProperty('--municipio-color', color);
+    }
+
+    /* ─── Historia ───────────────────────────────────────── */
+    function renderHistoria () {
+      const text = municipio.historia || municipio.descripcion || '';
+      if (!text) {
+        document.getElementById('section-historia').hidden = true;
+        return;
+      }
+      /* Render paragraphs; treat newlines as paragraph breaks */
+      const paras = text.split(/\n\n+/).filter(p => p.trim());
+      historiaText.innerHTML = paras.map(p => `<p>${escapeHtml(p.trim())}</p>`).join('');
+    }
+
+    /* ─── Agrupaciones ───────────────────────────────────── */
+    function populateAgAñoSelect () {
+      const años = [...new Set(agrupaciones.map(a => a.año || a.anyo).filter(Boolean))].sort((a, b) => b - a);
+      años.forEach(año => {
+        const opt = document.createElement('option');
+        opt.value = año;
+        opt.textContent = año;
+        agAño.appendChild(opt);
+      });
+    }
+
+    function bindAgFilters () {
+      let timer;
+      agSearch.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(applyAgFilters, 260); });
+      agTipo.addEventListener('change', applyAgFilters);
+      agAño.addEventListener('change', applyAgFilters);
+    }
+
+    function applyAgFilters () {
+      const q    = agSearch.value.toLowerCase().trim();
+      const tipo = agTipo.value;
+      const año  = agAño.value;
+
+      filteredAgs = agrupaciones.filter(ag => {
+        const agTipoVal = (ag.tipo || ag.modalidad || '').toLowerCase();
+        const agAñoVal  = String(ag.año || ag.anyo || '');
+        const agAutor   = (ag.autor || (ag.autores||[]).join(' ') || '').toLowerCase();
+        if (tipo && !agTipoVal.includes(tipo)) return false;
+        if (año && agAñoVal !== String(año)) return false;
+        if (q) {
+          const hay = [ag.nombre, agAutor, agAñoVal, agTipoVal].join(' ').toLowerCase();
+          if (!hay.includes(q)) return false;
+        }
+        return true;
+      });
+
+      renderAgrupaciones(filteredAgs);
+    }
+
+    function renderAgrupaciones (ags) {
+      agrupacionesGrid.innerHTML = '';
+
+      const shown = ags.length;
+      const total = agrupaciones.length;
+      if (shown === total) {
+        agCount.textContent = `${total} ${total === 1 ? 'agrupación' : 'agrupaciones'}`;
+      } else {
+        agCount.textContent = `${shown} de ${total} ${total === 1 ? 'agrupación' : 'agrupaciones'}`;
+      }
+
+      if (!ags.length) {
+        agrupacionesEmpty.hidden  = false;
+        agrupacionesGrid.hidden   = true;
+        return;
+      }
+      agrupacionesEmpty.hidden  = true;
+      agrupacionesGrid.hidden   = false;
+
+      ags.forEach(ag => {
+        const card = buildAgrupacionCard(ag);
+        agrupacionesGrid.appendChild(card);
+      });
+    }
+
+    function buildAgrupacionCard (ag) {
+      /* Use renderAgrupacionCard from app.js if available */
+      if (typeof renderAgrupacionCard === 'function') {
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = renderAgrupacionCard(ag);
+        const el = wrapper.firstElementChild;
+        if (el) return el;
+      }
+
+      /* Fallback – built-in render with link */
+      const munColor = (municipio && municipio.color) ? municipio.color : 'var(--blue)';
+      const article = document.createElement('article');
+      article.className = 'card';
+      article.style.cursor = 'pointer';
+      article.addEventListener('click', () => { location.href = `agrupacion.html?id=${ag.id}`; });
+
+      article.innerHTML = `
+        <div class="card-image-placeholder">${typeof iconMask === 'function' ? iconMask() : ''}</div>
+        <div class="card-body">
+          <div class="card-eyebrow" style="color:${escapeHtml(munColor)}">${escapeHtml(ag.municipio || '')}</div>
+          <h3 class="card-title">${escapeHtml(ag.nombre || 'Sin nombre')}</h3>
+          <div class="card-meta">
+            ${ag.año||ag.anyo ? `<span>${escapeHtml(String(ag.año||ag.anyo||''))}</span>` : ''}
+            ${ag.modalidad||ag.tipo ? `<span class="tag">${escapeHtml(ag.modalidad||ag.tipo||'')}</span>` : ''}
+          </div>
+        </div>
+        <div class="card-footer">
+          <span></span>
+          <span style="color:var(--blue);font-family:var(--font-sans);font-size:13px;font-weight:600">Ver ficha →</span>
+        </div>
+      `;
+      return article;
+    }
+
+    /* ─── Autores ────────────────────────────────────────── */
+    function renderAutores (ags) {
+      /* Extract unique autores from agrupaciones */
+      const autorMap = new Map();
+      ags.forEach(ag => {
+        const autoresList = ag.autores && ag.autores.length ? ag.autores : (ag.autor ? [ag.autor] : []);
+        autoresList.forEach(nombre => {
+          if (!nombre) return;
+          if (!autorMap.has(nombre)) {
+            autorMap.set(nombre, { nombre, agrupaciones: [] });
+          }
+          autorMap.get(nombre).agrupaciones.push(ag);
+        });
+      });
+
+      const autores = [...autorMap.values()];
+
+      if (!autores.length) {
+        autoresEmpty.hidden = false;
+        autoresGrid.hidden  = true;
+        return;
+      }
+      autoresEmpty.hidden = true;
+      autoresGrid.hidden  = false;
+
+      autoresGrid.innerHTML = '';
+      autores.forEach(autor => {
+        const card = buildAutorCard(autor);
+        autoresGrid.appendChild(card);
+      });
+    }
+
+    function buildAutorCard (autor) {
+      const initials = autor.nombre.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
+      const count = autor.agrupaciones.length;
+      const tipos = [...new Set(autor.agrupaciones.map(a => a.tipo).filter(Boolean))];
+
+      const card = document.createElement('div');
+      card.className = 'autor-card';
+      card.innerHTML = `
+        <div class="autor-card__avatar">
+          <span class="autor-card__initials">${escapeHtml(initials)}</span>
+        </div>
+        <div class="autor-card__info">
+          <h3 class="autor-card__name">${escapeHtml(autor.nombre)}</h3>
+          <p class="autor-card__meta">${count} ${count === 1 ? 'agrupación' : 'agrupaciones'}</p>
+          ${tipos.length ? `<div class="autor-card__tipos">
+            ${tipos.map(t => `<span class="badge badge--tipo badge--${t.toLowerCase()}">${escapeHtml(t)}</span>`).join('')}
+          </div>` : ''}
+        </div>
+      `;
+      return card;
+    }
+
+    /* ─── Cronología ─────────────────────────────────────── */
+    function renderCronologia (ags) {
+      if (!ags.length) {
+        cronologiaEmpty.hidden = false;
+        cronologiaList.hidden  = true;
+        return;
+      }
+      cronologiaEmpty.hidden = true;
+      cronologiaList.hidden  = false;
+
+      /* Sort by year ascending */
+      const sorted = [...ags].sort((a, b) => (a.anyoNum || parseInt(a.anyo||a.año||'0')) - (b.anyoNum || parseInt(b.anyo||b.año||'0')));
+
+      /* Group by year */
+      const byYear = new Map();
+      sorted.forEach(ag => {
+        const y = ag.anyo || ag.año || 'Sin año';
+        if (!byYear.has(y)) byYear.set(y, []);
+        byYear.get(y).push(ag);
+      });
+
+      cronologiaList.innerHTML = '';
+      byYear.forEach((yearAgs, year) => {
+        const group = document.createElement('div');
+        group.className = 'crono-group';
+        const tipoClass = yearAgs[0] ? (yearAgs[0].modalidad || yearAgs[0].tipo || '').toLowerCase() : '';
+        group.innerHTML = `
+          <div class="crono-group__year">
+            <span>${year}</span>
+          </div>
+          <ul class="crono-group__list">
+            ${yearAgs.map(ag => {
+              const autores = ag.autores && ag.autores.length ? ag.autores : (ag.autor ? [ag.autor] : []);
+              const premiosList = ag.premios && ag.premios.length ? ag.premios : (ag.premio ? [ag.premio] : []);
+              const tipo = ag.modalidad || ag.tipo || '';
+              return `
+              <li class="crono-item">
+                <span class="crono-item__dot"></span>
+                <div class="crono-item__body">
+                  <a class="crono-item__name" href="agrupacion.html?id=${ag.id}" style="text-decoration:none;color:inherit">${escapeHtml(ag.nombre || 'Sin nombre')}</a>
+                  ${tipo ? `<span class="tag" style="font-size:10px;padding:2px 6px">${escapeHtml(tipo)}</span>` : ''}
+                  ${autores.length ? `<span class="crono-item__autor"> — ${escapeHtml(autores.slice(0,2).join(', '))}</span>` : ''}
+                  ${premiosList.length ? `<span class="crono-item__premio">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    ${escapeHtml(premiosList[0])}
+                  </span>` : ''}
+                </div>
+              </li>`;
+            }).join('')}
+          </ul>
+        `;
+        cronologiaList.appendChild(group);
+      });
+    }
+
+    /* ─── Not found ──────────────────────────────────────── */
+    function showNotFound () {
+      loadingState.hidden = true;
+      pageBody.hidden     = true;
+      notFound.hidden     = false;
+      document.getElementById('municipio-hero').hidden = true;
+    }
+
+    /* ─── Helpers ────────────────────────────────────────── */
+    function slugify (str) {
+      return String(str)
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/[^a-z0-9-]/g, '');
+    }
+
+    function escapeHtml (str) {
+      return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+  }());
+  </script>
+</body>
+</html>

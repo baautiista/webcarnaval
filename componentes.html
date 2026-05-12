@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Componentes — Archivo del Carnaval del Campo de Gibraltar</title>
+  <meta name="description" content="Descubre los componentes que han formado parte de las agrupaciones del Carnaval del Campo de Gibraltar." />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+<div id="navbar-placeholder"></div>
+
+<!-- PAGE HERO -->
+<section class="page-hero-v2 page-hero-v2--componentes">
+  <div class="page-hero-v2__bg">
+    <div class="page-hero-v2__orb page-hero-v2__orb--1"></div>
+    <div class="page-hero-v2__orb page-hero-v2__orb--2"></div>
+  </div>
+  <div class="container page-hero-v2__inner">
+    <nav class="page-hero-v2__breadcrumb" aria-label="Migas de pan">
+      <a href="index.html">Inicio</a>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      <span>Componentes</span>
+    </nav>
+    <div class="page-hero-v2__label">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Integrantes del carnaval
+    </div>
+    <h1 class="page-hero-v2__title">Componentes</h1>
+    <p class="page-hero-v2__subtitle">Los integrantes que han dado voz y presencia a las agrupaciones del Carnaval del Campo de Gibraltar. Cantores, actores y artistas que encarnan cada año la esencia de nuestra fiesta mayor.</p>
+    <div class="page-hero-v2__stats">
+      <div class="page-hero-v2__stat"><span class="page-hero-v2__stat-val" id="stat-total">—</span><span class="page-hero-v2__stat-label">componentes</span></div>
+    </div>
+  </div>
+</section>
+
+<main>
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar-v2 sticky-filters">
+    <div class="container filter-bar-v2__inner">
+      <div class="filter-bar-v2__search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="search" id="search-componentes" class="filter-bar-v2__input" placeholder="Buscar componente por nombre…" autocomplete="off" aria-label="Buscar componente" />
+        <button class="filter-bar-v2__clear" id="search-clear" aria-label="Limpiar" hidden>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <span class="filter-bar-v2__count" id="results-count" aria-live="polite"></span>
+    </div>
+  </div>
+
+  <!-- GRID -->
+  <section class="people-section">
+    <div class="container">
+      <div id="componentes-grid" class="people-grid-v2" role="list"></div>
+
+      <div id="empty-state" class="empty-v2" hidden>
+        <div class="empty-v2__icon">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </div>
+        <p class="empty-v2__title">Sin resultados</p>
+        <p class="empty-v2__desc">No se encontró ningún componente que coincida con "<strong id="empty-query"></strong>".</p>
+        <button class="btn btn-outline" id="empty-clear">Limpiar búsqueda</button>
+      </div>
+
+      <div id="no-data-state" class="empty-v2" hidden>
+        <div class="empty-v2__icon">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        </div>
+        <p class="empty-v2__title">Archivo en construcción</p>
+        <p class="empty-v2__desc">El archivo de componentes aún no contiene registros. Vuelve pronto.</p>
+      </div>
+
+      <div id="loading-state" class="loading-v2">
+        <div class="loading-v2__dots"><span></span><span></span><span></span></div>
+        <span>Cargando componentes…</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div id="footer-placeholder"></div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var allComponentes = [], filteredComponentes = [], searchQuery = '';
+
+  var grid        = document.getElementById('componentes-grid');
+  var searchInput = document.getElementById('search-componentes');
+  var clearBtn    = document.getElementById('search-clear');
+  var countEl     = document.getElementById('results-count');
+  var emptyState  = document.getElementById('empty-state');
+  var emptyQuery  = document.getElementById('empty-query');
+  var emptyClear  = document.getElementById('empty-clear');
+  var noDataState = document.getElementById('no-data-state');
+  var loadingState= document.getElementById('loading-state');
+  var statTotal   = document.getElementById('stat-total');
+
+  function normalise(str) {
+    return (str||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  }
+
+  function updateCount(n, total) {
+    if (!countEl) return;
+    countEl.textContent = searchQuery
+      ? (n === 1 ? '1 componente encontrado' : n + ' componentes encontrados')
+      : (total === 1 ? '1 componente en el archivo' : total + ' componentes en el archivo');
+  }
+
+  function renderGrid() {
+    if (!grid) return;
+    grid.innerHTML = '';
+    var hasQuery = searchQuery.length > 0;
+    emptyState.hidden  = !(hasQuery && filteredComponentes.length === 0);
+    noDataState.hidden = !(!hasQuery && allComponentes.length === 0);
+    if ((hasQuery && filteredComponentes.length === 0) || (!hasQuery && allComponentes.length === 0)) {
+      if (hasQuery) emptyQuery.textContent = searchQuery;
+      return;
+    }
+    filteredComponentes.forEach(function(p) {
+      var card = renderPersonCard(p, 'componente');
+      if (card) { card.setAttribute('role','listitem'); grid.appendChild(card); }
+    });
+    updateCount(filteredComponentes.length, allComponentes.length);
+  }
+
+  function applyFilter() {
+    var q = normalise(searchQuery);
+    filteredComponentes = q
+      ? allComponentes.filter(function(p){ return normalise(p.nombre||p.name||'').indexOf(q)!==-1 || normalise(p.alias||'').indexOf(q)!==-1; })
+      : allComponentes.slice();
+    renderGrid();
+    updateCount(filteredComponentes.length, allComponentes.length);
+  }
+
+  if (searchInput) {
+    searchInput.addEventListener('input', function() {
+      searchQuery = searchInput.value.trim();
+      clearBtn.hidden = !searchQuery;
+      applyFilter();
+    });
+  }
+
+  function clearSearch() {
+    searchQuery = '';
+    if (searchInput) searchInput.value = '';
+    if (clearBtn) clearBtn.hidden = true;
+    applyFilter();
+    if (searchInput) searchInput.focus();
+  }
+
+  if (clearBtn) clearBtn.addEventListener('click', clearSearch);
+  if (emptyClear) emptyClear.addEventListener('click', clearSearch);
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === '/' && document.activeElement !== searchInput) { e.preventDefault(); if(searchInput) searchInput.focus(); }
+  });
+
+  function init() {
+    if (typeof initPage === 'function') initPage({ activePage: 'componentes' });
+    if (loadingState) loadingState.hidden = true;
+    if (typeof DataAPI !== 'undefined' && typeof DataAPI.getComponentes === 'function') {
+      try { allComponentes = DataAPI.getComponentes() || []; } catch(e) { allComponentes = []; }
+    }
+    filteredComponentes = allComponentes.slice();
+    if (statTotal) statTotal.textContent = allComponentes.length || '—';
+    if (!allComponentes.length) { noDataState.hidden = false; if(countEl) countEl.textContent = ''; }
+    else { noDataState.hidden = true; renderGrid(); }
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+}());
+</script>
+</body>
+</html>

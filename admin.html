@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin · Archivo del Carnaval</title>
+  <meta name="robots" content="noindex, nofollow, noarchive" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    /* Admin dark theme overrides */
+    body{
+      --dark: #0d0d14;
+      --dark2: #161622;
+      --dark3: #1e1e2e;
+      --dark4: #252538;
+      --white: #ffffff;
+      --gray3: #6b7280;
+      --gray4: #9ca3af;
+      --gray5: #e5e7eb;
+      --text-primary: #ffffff;
+      --surface: #161622;
+      --surface2: #1e1e2e;
+      --border: rgba(255,255,255,0.07);
+      background: var(--dark);
+      color: var(--white);
+    }
+    *{box-sizing:border-box}
+    .a-login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+    .a-login__card{background:var(--dark2);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:40px;width:100%;max-width:400px}
+    .a-login__logo{width:48px;height:48px;background:linear-gradient(135deg,var(--blue),var(--pink));border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
+    .a-login__title{font-family:var(--font-display);font-size:24px;font-weight:700;text-align:center;color:var(--white);margin-bottom:6px}
+    .a-login__sub{font-family:var(--font-sans);font-size:13px;color:var(--gray3);text-align:center;margin-bottom:32px}
+    .a-login__error{background:rgba(249,22,105,0.12);border:1px solid rgba(249,22,105,0.3);border-radius:8px;padding:10px 14px;font-family:var(--font-sans);font-size:13px;color:var(--pink);margin-bottom:16px;display:none}
+    .a-input-group{margin-bottom:16px}
+    .a-label{display:block;font-family:var(--font-sans);font-size:12px;font-weight:600;color:var(--gray4);letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px}
+    .a-input{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:var(--white);font-family:var(--font-sans);font-size:14px;padding:10px 14px;outline:none;transition:border-color .2s}
+    .a-input:focus{border-color:var(--blue)}
+    .a-btn-primary{width:100%;background:linear-gradient(135deg,var(--blue),#1a6fe8);border:none;border-radius:10px;color:var(--white);font-family:var(--font-sans);font-size:14px;font-weight:700;padding:12px;cursor:pointer;transition:opacity .2s;margin-top:8px}
+    .a-btn-primary:hover{opacity:.88}
+    .a-btn-primary:disabled{opacity:.5;cursor:default}
+    .a-panel{display:flex;min-height:100vh}
+    .a-sidebar{width:240px;background:var(--dark2);border-right:1px solid rgba(255,255,255,.06);position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;z-index:200;overflow-y:auto}
+    .a-sidebar__brand{padding:20px 20px 16px;border-bottom:1px solid rgba(255,255,255,.06)}
+    .a-sidebar__brand-name{font-family:var(--font-sans);font-size:13px;font-weight:700;color:var(--white);display:block}
+    .a-sidebar__brand-sub{font-family:var(--font-sans);font-size:11px;color:var(--gray3);display:block;margin-top:2px}
+    .a-nav{flex:1;padding:12px 8px}
+    .a-nav__section{font-family:var(--font-sans);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gray3);padding:8px 12px 4px}
+    .a-nav__btn{display:flex;align-items:center;gap:10px;width:100%;background:none;border:none;border-radius:8px;color:var(--gray4);font-family:var(--font-sans);font-size:13px;font-weight:500;padding:9px 12px;cursor:pointer;text-align:left;transition:all .2s}
+    .a-nav__btn:hover{background:rgba(255,255,255,.04);color:var(--white)}
+    .a-nav__btn.active{background:rgba(57,134,255,.12);color:var(--blue)}
+    .a-nav__btn svg{flex-shrink:0;opacity:.7}
+    .a-nav__btn.active svg{opacity:1}
+    .a-sidebar__footer{padding:16px;border-top:1px solid rgba(255,255,255,.06)}
+    .a-logout{display:flex;align-items:center;gap:8px;width:100%;background:rgba(249,22,105,.1);border:1px solid rgba(249,22,105,.2);border-radius:8px;color:var(--pink);font-family:var(--font-sans);font-size:13px;font-weight:600;padding:9px 14px;cursor:pointer;transition:background .2s;justify-content:center}
+    .a-logout:hover{background:rgba(249,22,105,.18)}
+    .a-main{margin-left:240px;flex:1;min-height:100vh}
+    .a-topbar{background:rgba(17,17,17,.95);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.06);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+    .a-topbar__title{font-family:var(--font-sans);font-size:15px;font-weight:700;color:var(--white)}
+    .a-topbar__user{font-family:var(--font-sans);font-size:12px;color:var(--gray3);display:flex;align-items:center;gap:8px}
+    .a-topbar__dot{width:8px;height:8px;background:var(--green);border-radius:50%}
+    .a-content{padding:32px}
+    .a-section{display:none}
+    .a-section.active{display:block}
+    .a-section-header{margin-bottom:28px}
+    .a-section-header h2{font-family:var(--font-display);font-size:28px;font-weight:700;color:var(--white);margin-bottom:6px}
+    .a-section-header p{font-family:var(--font-sans);font-size:13px;color:var(--gray3)}
+    .a-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px;margin-bottom:32px}
+    .a-stat{background:var(--dark2);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:20px}
+    .a-stat__val{font-family:var(--font-display);font-size:32px;font-weight:900;background:linear-gradient(135deg,var(--blue),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:block}
+    .a-stat__label{font-family:var(--font-sans);font-size:12px;color:var(--gray3);text-transform:uppercase;letter-spacing:.06em;margin-top:4px}
+    .a-upload-card{background:var(--dark2);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:28px;margin-bottom:32px}
+    .a-upload-card h3{font-family:var(--font-sans);font-size:15px;font-weight:700;color:var(--white);margin-bottom:20px;display:flex;align-items:center;gap:8px}
+    .a-upload-card h3 svg{color:var(--blue)}
+    .a-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .a-form-grid--3{grid-template-columns:1fr 1fr 1fr}
+    .a-form-full{grid-column:1/-1}
+    .a-form-group{display:flex;flex-direction:column;gap:6px}
+    .a-select{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:var(--white);font-family:var(--font-sans);font-size:13px;padding:9px 12px;outline:none;appearance:none;cursor:pointer;transition:border-color .2s;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;background-size:12px}
+    .a-select:focus{border-color:var(--blue)}
+    .a-select option{background:var(--dark2)}
+    .a-textarea{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:var(--white);font-family:var(--font-sans);font-size:13px;padding:9px 12px;outline:none;resize:vertical;min-height:80px;transition:border-color .2s}
+    .a-textarea:focus{border-color:var(--blue)}
+    .a-dropzone{border:2px dashed rgba(57,134,255,.3);border-radius:12px;padding:40px 24px;text-align:center;cursor:pointer;transition:all .2s;background:rgba(57,134,255,.03);position:relative}
+    .a-dropzone:hover,.a-dropzone.dragover{border-color:var(--blue);background:rgba(57,134,255,.07)}
+    .a-dropzone input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+    .a-dropzone__icon{color:var(--blue);margin-bottom:12px;opacity:.7}
+    .a-dropzone__text{font-family:var(--font-sans);font-size:14px;color:var(--gray4)}
+    .a-dropzone__text strong{color:var(--blue)}
+    .a-dropzone__sub{font-size:12px;color:var(--gray3);margin-top:4px}
+    .a-progress{display:none;margin-top:16px}
+    .a-progress-bar{height:4px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden;margin-bottom:8px}
+    .a-progress-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--pink));transition:width .3s;width:0%}
+    .a-progress-text{font-family:var(--font-sans);font-size:12px;color:var(--gray3)}
+    .a-preview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px;margin-top:14px}
+    .a-preview-item{position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;background:var(--dark3)}
+    .a-preview-item img{width:100%;height:100%;object-fit:cover}
+    .a-preview-item__remove{position:absolute;top:4px;right:4px;width:22px;height:22px;background:rgba(0,0,0,.7);border:none;border-radius:50%;color:var(--white);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
+    .a-table-wrap{overflow-x:auto}
+    .a-table{width:100%;border-collapse:collapse;font-family:var(--font-sans);font-size:13px}
+    .a-table th{text-align:left;padding:10px 14px;color:var(--gray3);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid rgba(255,255,255,.06);white-space:nowrap}
+    .a-table td{padding:10px 14px;color:var(--gray5);border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle}
+    .a-table tr:hover td{background:rgba(255,255,255,.02)}
+    .a-table-thumb{width:48px;height:36px;border-radius:6px;object-fit:cover;background:var(--dark3)}
+    .a-badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
+    .a-badge--blue{background:rgba(57,134,255,.15);color:var(--blue)}
+    .a-badge--pink{background:rgba(249,22,105,.15);color:var(--pink)}
+    .a-badge--yellow{background:rgba(252,189,13,.15);color:var(--yellow)}
+    .a-badge--green{background:rgba(72,187,117,.15);color:var(--green)}
+    .a-btn-del{background:rgba(249,22,105,.1);border:1px solid rgba(249,22,105,.25);border-radius:6px;color:var(--pink);font-size:12px;padding:4px 10px;cursor:pointer;font-family:var(--font-sans);transition:background .2s}
+    .a-btn-del:hover{background:rgba(249,22,105,.2)}
+    .a-btn-sm{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:6px;color:var(--gray5);font-size:12px;padding:4px 10px;cursor:pointer;font-family:var(--font-sans);transition:background .2s}
+    .a-btn-sm:hover{background:rgba(255,255,255,.1)}
+    .a-save-btn{background:linear-gradient(135deg,var(--blue),#1a6fe8);border:none;border-radius:10px;color:var(--white);font-family:var(--font-sans);font-size:14px;font-weight:700;padding:11px 28px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:opacity .2s;margin-top:20px}
+    .a-save-btn:hover{opacity:.88}
+    .a-save-btn:disabled{opacity:.45;cursor:default}
+    .a-toast-wrap{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+    .a-toast{background:var(--dark2);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:12px 18px;font-family:var(--font-sans);font-size:13px;color:var(--white);display:flex;align-items:center;gap:10px;animation:aSlideIn .3s ease;min-width:240px}
+    .a-toast--ok{border-left:3px solid var(--green)}
+    .a-toast--err{border-left:3px solid var(--pink)}
+    @keyframes aSlideIn{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}
+    .a-empty{text-align:center;padding:48px 24px;color:var(--gray3);font-family:var(--font-sans);font-size:14px}
+    .a-foto-preview{width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.1);display:none}
+    @media(max-width:768px){.a-sidebar{display:none}.a-main{margin-left:0}.a-content{padding:16px}.a-form-grid,.a-form-grid--3{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="view-login" style="display:none">
+<div class="a-login">
+<div class="a-login__card">
+  <div class="a-login__logo">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+  </div>
+  <h1 class="a-login__title">Panel de Administración</h1>
+  <p class="a-login__sub">Archivo del Carnaval del Campo de Gibraltar</p>
+  <div class="a-login__error" id="login-error"></div>
+  <form id="login-form">
+    <div class="a-input-group">
+      <label class="a-label" for="login-email">Email</label>
+      <input class="a-input" type="email" id="login-email" autocomplete="email" placeholder="tu@email.com" />
+    </div>
+    <div class="a-input-group">
+      <label class="a-label" for="login-pass">Contraseña</label>
+      <input class="a-input" type="password" id="login-pass" autocomplete="current-password" placeholder="••••••••" />
+    </div>
+    <button type="submit" class="a-btn-primary" id="login-btn">Acceder</button>
+  </form>
+</div>
+</div>
+</div>
+
+<!-- PANEL -->
+<div id="view-panel" style="display:none">
+<div class="a-panel">
+
+  <aside class="a-sidebar">
+    <div class="a-sidebar__brand">
+      <span class="a-sidebar__brand-name">Archivo del Carnaval</span>
+      <span class="a-sidebar__brand-sub">Panel de administración</span>
+    </div>
+    <nav class="a-nav">
+      <div class="a-nav__section">General</div>
+      <button class="a-nav__btn active" data-section="resumen">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Resumen
+      </button>
+      <div class="a-nav__section">Archivo</div>
+      <button class="a-nav__btn" data-section="fotos">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        Fotografías
+      </button>
+      <button class="a-nav__btn" data-section="videos">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+        Vídeos
+      </button>
+      <button class="a-nav__btn" data-section="autores">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Autores
+      </button>
+      <button class="a-nav__btn" data-section="componentes">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        Componentes
+      </button>
+      <button class="a-nav__btn" data-section="letras">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Letras
+      </button>
+      <button class="a-nav__btn" data-section="municipios">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Municipios
+      </button>
+    </nav>
+    <div class="a-sidebar__footer">
+      <button class="a-logout" id="btn-logout">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <div class="a-main">
+    <div class="a-topbar">
+      <span class="a-topbar__title" id="topbar-title">Resumen</span>
+      <div class="a-topbar__user">
+        <div class="a-topbar__dot"></div>
+        <span id="topbar-email"></span>
+        <a href="index.html" style="color:var(--gray3);font-size:12px;margin-left:8px">Ver sitio →</a>
+      </div>
+    </div>
+
+    <div class="a-content">
+
+      <!-- RESUMEN -->
+      <div id="section-resumen" class="a-section active">
+        <div class="a-section-header">
+          <h2>Resumen del archivo</h2>
+          <p>Contenido actualmente en la base de datos.</p>
+        </div>
+        <div class="a-stats" id="stats-grid">
+          <div class="a-stat"><span class="a-stat__val">…</span><span class="a-stat__label">Fotografías</span></div>
+          <div class="a-stat"><span class="a-stat__val">…</span><span class="a-stat__label">Vídeos</span></div>
+          <div class="a-stat"><span class="a-stat__val">…</span><span class="a-stat__label">Autores</span></div>
+          <div class="a-stat"><span class="a-stat__val">…</span><span class="a-stat__label">Componentes</span></div>
+        </div>
+      </div>
+
+      <!-- FOTOGRAFÍAS -->
+      <div id="section-fotos" class="a-section">
+        <div class="a-section-header">
+          <h2>Fotografías</h2>
+          <p>Sube fotos del archivo. Se guardan en Supabase Storage y aparecen en la Fototeca.</p>
+        </div>
+        <div class="a-upload-card">
+          <h3><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>Subir fotografías</h3>
+          <div class="a-form-grid">
+            <div class="a-form-group">
+              <label class="a-label">Agrupación</label>
+              <input class="a-input" type="text" id="foto-agrupacion" placeholder="Nombre de la agrupación" list="ag-datalist" />
+              <datalist id="ag-datalist"></datalist>
+            </div>
+            <div class="a-form-group">
+              <label class="a-label">Municipio</label>
+              <input class="a-input" type="text" id="foto-municipio" placeholder="Municipio" list="mun-datalist" />
+              <datalist id="mun-datalist">
+                <option value="La Línea de la Concepción"/>
+                <option value="Algeciras"/><option value="San Roque"/>
+                <option value="Los Barrios"/><option value="Tarifa"/>
+                <option value="Jimena de la Frontera"/><option value="Castellar de la Frontera"/>
+              </datalist>
+            </div>
+            <div class="a-form-group">
+              <label class="a-label">Año</label>
+              <input class="a-input" type="number" id="foto-ano" placeholder="2024" min="1900" max="2099" />
+            </div>
+            <div class="a-form-group">
+              <label class="a-label">Descripción (opcional)</label>
+              <input class="a-input" type="text" id="foto-desc" placeholder="Descripción breve" />
+            </div>
+            <div class="a-form-full a-form-group">
+              <label class="a-label">Archivos de imagen</label>
+              <div class="a-dropzone" id="foto-dropzone">
+                <input type="file" id="foto-files" accept="image/*" multiple />
+                <div class="a-dropzone__icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+                <p class="a-dropzone__text">Arrastra imágenes aquí o <strong>haz clic para seleccionar</strong></p>
+                <p class="a-dropzone__sub">JPG, PNG, WebP — máx. 10 MB por archivo</p>
+              </div>
+              <div class="a-preview-grid" id="foto-preview"></div>
+              <div class="a-progress" id="foto-progress">
+                <div class="a-progress-bar"><div class="a-progress-fill" id="foto-progress-fill"></div></div>
+                <span class="a-progress-text" id="foto-progress-text">Subiendo…</span>
+              </div>
+            </div>
+          </div>
+          <button class="a-save-btn" id="btn-upload-fotos">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/></svg>
+            Subir fotografías
+          </button>
+        </div>
+        <div class="a-upload-card">
+          <h3><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Fotografías archivadas (<span id="fotos-count">0</span>)</h3>
+          <div class="a-table-wrap">
+            <table class="a-table">
+              <thead><tr><th></th><th>Agrupación</th><th>Municipio</th><th>Año</th><th>Portada</th><th>Acción</th></tr></thead>
+              <tbody id="fotos-tbody"><tr><td colspan="6" class="a-empty">Cargando…</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- VÍDEOS -->
+      <div id="section-videos" class="a-section">
+        <div class="a-section-header">
+          <h2>Vídeos</h2>
+          <p>Añade URLs de YouTube. Aparecen en la sección Vídeos del sitio.</p>
+        </div>
+        <div class="a-upload-card">
+          <h3><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>Añadir vídeo</h3>
+          <div class="a-form-grid">
+            <div class="a-form-group a-form-full">
+              <label class="a-label">URL del vídeo (YouTube, etc.)</label>
+              <input class="a-input" type="url" id="vid-url" placeholder="https://www.youtube.com/watch?v=..." />
+            </div>
+            <div class="a-form-group">
+              <label class="a-label">Agrupación</label>
+              <input class="a-input" type="text" id="vid-agrupacion" placeholder="Nombre de la agrupación" list="ag-datalist" />
+            </div>
+            <div class="a-form-group">
+              <label class="a-label">Título (opcional)</label>
+              <input class="a-input" type="text" id="vid-titulo" placeholder="Ej: Actuación final" />
+            </div>
+            <div class="a-form-group">
+              <label class="a-label">Municipio</label>
+              <input class="a-input" type="text" id="vid-municipio" placeholder="Municipio" list="mun-datalist" />
+            </div>
+            <div class="a-form-group">
+              <label class="a-label">Año</label>
+              <input class="a-input" type="number" id="vid-ano" placeholder="2024" min="1900" max="2099" />
+            </div>
+            <div class="a-form-group">
+              <label class="a-label">Tipo</label>
+              <select class="a-select" id="vid-tipo">
+                <option value="">— Sin especificar —</option>
+                <option value="comparsa">Comparsa</option>
+                <option value="chirigota">Chirigota</option>
+                <option value="cuarteto">Cuarteto</option>
+                <option value="coro">Coro</option>
+                <option value="romancero">Romancero</option>
+              </select>
+            </div>
+          </div>
+          <button class="a-save-btn" id="btn-add-video">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Añadir vídeo
+          </button>
+        </div>
+        <div class="a-upload-card">
+          <h3><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>Vídeos archivados (<span id="videos-count">0</span>)</h3>
+          <div class="a-table-wrap">
+            <table class="a-table">
+              <thead><tr><th>Agrupación</th><th>Tipo</th><th>Municipio</th><th>Año</th><th>URL</th><th>Acción</th></tr></thead>
+              <tbody id="videos-tbody"><tr><td colspan="6" class="a-empty">Cargando…</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- AUTORES -->
+      <div id="section-autores" class="a-section">
+        <div class="a-section-header">
+          <h2>Autores</h2>
+          <p>Añade o actualiza la foto y biografía de un autor. El nombre debe coincidir con el del CSV.</p>
+        </div>
+        <div class="a-upload-card">
+          <h3><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897z"/></svg>Añadir / actualizar autor</h3>
+          <div class="a-form-grid">
+            <div class="a-form-group">
+              <label class="a-label">Nombre completo</label>
+              <input class="a-input" type="text" id="autor-nombre" placeholder="Nombre del autor" list="autores-datalist" />
+              <datalist id="autores-datalist"></datalist>
+            </div>
+            <div class="a-form-group">
+              <label class="a-label">Municipio</label>
+              <input class="a-input" type="text" id="autor-municipio" placeholder="Municipio" list="mun-datalist" />
+            </div>
+            <div class="a-form-group a-form-full">
+              <label class="a-label">Foto del autor</label>
+              <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+                <div class="a-dropzone" style="flex:1;min-width:200px;padding:20px">
+                  <input type="file" id="autor-foto-file" accept="image/*" />
+                  <p class="a-dropzone__text" style="font-size:13px">Haz clic para seleccionar foto</p>
+                  <p class="a-dropzone__sub">JPG, PNG — máx. 10 MB</p>
+                </div>
+                <img class="a-foto-preview" id="autor-foto-preview" src="" alt="Preview" />
+              </div>
+            </div>
+            <div class="a-form-group a-form-full">
+              <label class="a-label">Biografía</label>
+              <textarea class="a-textarea" id="autor-bio" placeholder="Breve biografía del autor…" rows="4"></textarea>
+            </div>
+          </div>
+          <button class="a-save-btn" id="btn-save-autor">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Guardar autor
+          </button>
+        </div>
+        <div class="a-upload-card">
+          <h3><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Autores guardados (<span id="autores-count">0</span>)</h3>
+          <div class="a-table-wrap">
+            <table class="a-table">
+              <thead><tr><th></th><th>Nombre</th><th>Municipio</th><th>Bio</th><th>Acciones</th></tr></thead>
+              <tbody id="autores-tbody"><tr><td colspan="5" class="a-empty">Cargando…</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- COMPONENTES -->
+      <div id="section-componentes" class="a-section">
+        <div class="a-section-header">
+          <h2>Componentes</h2>
+          <p>Asigna el rol (instrumento o voz) de cada componente en cada agrupación.</p>
+        </div>
+        <div class="a-upload-card">
+          <h3><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Añadir rol de componente</h3>
+          <div class="a-form-grid a-form-grid--3">
+            <div class="a-form-group">
+              <label class="a-label">Componente</label>
+              <input class="a-input" type="text" id="comp-nombre" placeholder="Nombre del componente" list="comp-datalist" />
+              <datalist id="comp-datalist"></datalist>
+            </div>
+            <div class="a-form-group">
+              <label class="a-label">Agrupación</label>
+              <input class="a-input" type="text" id="comp-agrupacion" placeholder="Nombre de la agrupación" list="ag-datalist" />
+            </div>
+            <div class="a-form-group">
+              <label class="a-label">Municipio</label>
+              <input class="a-input" type="text" id="comp-municipio" placeholder="Municipio" list="mun-datalist" />
+            </div>
+            <div class="a-form-group">
+              <label class="a-label">Año</label>
+              <input class="a-input" type="number" id="comp-ano" placeholder="2024" min="1900" max="2099" />
+            </div>
+            <div class="a-form-group">
+              <label class="a-label">Rol / Instrumento / Voz</label>
+              <input class="a-input" type="text" id="comp-rol" placeholder="Ej: Caja, Tenor, Guitarra…" list="roles-datalist" />
+              <datalist id="roles-datalist">
+                <option value="Caja"/><option value="Bombo"/><option value="Platillos"/>
+                <option value="Tenor"/><option value="Barítono"/><option value="Bajo"/>
+                <option value="Guitarra"/><option value="Bajo eléctrico"/>
+                <option value="Teclado"/><option value="Director"/><option value="Presentador"/><option value="Solista"/>
+              </datalist>
+            </div>
+          </div>
+          <button class="a-save-btn" id="btn-add-comp">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Añadir componente
+          </button>
+        </div>
+        <div class="a-upload-card">
+          <h3><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Componentes registrados (<span id="comp-count">0</span>)</h3>
+          <div style="margin-bottom:12px">
+            <input class="a-input" type="search" id="comp-search" placeholder="Buscar componente…" style="max-width:320px" />
+          </div>
+          <div class="a-table-wrap">
+            <table class="a-table">
+              <thead><tr><th>Nombre</th><th>Agrupación</th><th>Municipio</th><th>Año</th><th>Rol</th><th>Acción</th></tr></thead>
+              <tbody id="comp-tbody"><tr><td colspan="6" class="a-empty">Cargando…</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- LETRAS -->
+      <div id="section-letras" class="a-section">
+        <div class="a-section-header">
+          <h2>Letras</h2>
+          <p>Añade los textos de presentación, pasodobles, cuplés y popurrí de cada agrupación.</p>
+        </div>
+        <div class="a-upload-card">
+          <h3><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Añadir letra</h3>
+          <div class="a-form-grid">
+            <div class="a-form-group">
+              <label class="a-label">Agrupación</label>
+              <input class="a-input" type="text" id="letra-agrupacion" placeholder="Nombre de la agrupación" list="ag-datalist" />
+            </div>
+            <div class="a-form-group">
+              <label class="a-label">Tipo de letra</label>
+              <select class="a-select" id="letra-tipo">
+                <option value="Presentación">Presentación</option>
+                <option value="Pasodoble">Pasodoble</option>
+                <option value="Cuplé">Cuplé</option>
+                <option value="Popurrí">Popurrí</option>
+                <option value="Pregón">Pregón</option>
+                <option value="Otro">Otro</option>
+              </select>
+            </div>
+            <div class="a-form-group">
+              <label class="a-label">Título (opcional)</label>
+              <input class="a-input" type="text" id="letra-titulo" placeholder="Ej: «La vida es un carnaval»" />
+            </div>
+            <div class="a-form-group">
+              <label class="a-label">Orden</label>
+              <input class="a-input" type="number" id="letra-orden" value="0" min="0" max="99" />
+            </div>
+            <div class="a-form-group a-form-full">
+              <label class="a-label">Contenido de la letra</label>
+              <textarea class="a-textarea" id="letra-contenido" placeholder="Escribe aquí el texto completo de la letra…" rows="10" style="min-height:200px;font-family:monospace;font-size:13px;line-height:1.7"></textarea>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:20px">
+            <button class="a-save-btn" id="btn-save-letra" style="margin-top:0">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>
+              Guardar letra
+            </button>
+            <button class="a-btn-sm" id="btn-cancel-letra" style="padding:10px 20px;font-size:13px;display:none">Cancelar edición</button>
+          </div>
+          <input type="hidden" id="letra-edit-id" value="" />
+        </div>
+        <div class="a-upload-card">
+          <h3><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>Letras archivadas (<span id="letras-count">0</span>)</h3>
+          <div style="margin-bottom:12px">
+            <input class="a-input" type="search" id="letras-search" placeholder="Filtrar por agrupación…" style="max-width:320px" />
+          </div>
+          <div class="a-table-wrap">
+            <table class="a-table">
+              <thead><tr><th>Agrupación</th><th>Tipo</th><th>Título</th><th>Orden</th><th>Acciones</th></tr></thead>
+              <tbody id="letras-tbody"><tr><td colspan="5" class="a-empty">Cargando…</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- MUNICIPIOS -->
+      <div id="section-municipios" class="a-section">
+        <div class="a-section-header">
+          <h2>Municipios</h2>
+          <p>Edita la descripción, foto de portada y color de cada municipio.</p>
+        </div>
+        <div class="a-upload-card">
+          <h3><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Editar municipio</h3>
+          <div class="a-form-grid">
+            <div class="a-form-group">
+              <label class="a-label">Municipio</label>
+              <select class="a-select" id="mun-edit-slug">
+                <option value="">— Seleccionar —</option>
+                <option value="lalinea">La Línea de la Concepción</option>
+                <option value="algeciras">Algeciras</option>
+                <option value="sanroque">San Roque</option>
+                <option value="losbarrios">Los Barrios</option>
+                <option value="tarifa">Tarifa</option>
+                <option value="jimena">Jimena de la Frontera</option>
+                <option value="castellar">Castellar de la Frontera</option>
+                <option value="tesorillo">Tesorillo</option>
+              </select>
+            </div>
+            <div class="a-form-group">
+              <label class="a-label">Color del municipio</label>
+              <input class="a-input" type="color" id="mun-edit-color" value="#3986ff" style="height:40px;padding:4px 8px;cursor:pointer" />
+            </div>
+            <div class="a-form-group a-form-full">
+              <label class="a-label">Descripción / Historia</label>
+              <textarea class="a-textarea" id="mun-edit-desc" placeholder="Historia y contexto del municipio…" rows="5"></textarea>
+            </div>
+            <div class="a-form-group a-form-full">
+              <label class="a-label">Foto de portada</label>
+              <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+                <div class="a-dropzone" style="flex:1;min-width:200px;padding:20px" id="mun-foto-zone">
+                  <input type="file" id="mun-foto-file" accept="image/*" />
+                  <p class="a-dropzone__text" style="font-size:13px">Haz clic para seleccionar foto de portada</p>
+                  <p class="a-dropzone__sub">JPG, PNG — máx. 10 MB</p>
+                </div>
+                <img class="a-foto-preview" id="mun-foto-preview" src="" alt="Preview" />
+              </div>
+            </div>
+          </div>
+          <button class="a-save-btn" id="btn-save-municipio">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Guardar municipio
+          </button>
+          <div id="mun-load-status" style="font-family:var(--font-sans);font-size:12px;color:var(--gray3);margin-top:12px"></div>
+        </div>
+        <div class="a-upload-card">
+          <h3><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/></svg>Municipios configurados (<span id="mun-count">0</span>)</h3>
+          <div class="a-table-wrap">
+            <table class="a-table">
+              <thead><tr><th></th><th>Municipio</th><th>Color</th><th>Descripción</th><th>Acción</th></tr></thead>
+              <tbody id="mun-tbody"><tr><td colspan="5" class="a-empty">Cargando…</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /a-content -->
+  </div><!-- /a-main -->
+</div><!-- /a-panel -->
+</div><!-- /view-panel -->
+
+<div class="a-toast-wrap" id="a-toasts"></div>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+const SUPA_URL = 'https://mlhcetkaiidwjfmmzpmj.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1saGNldGthaWlkd2pmbW16cG1qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1Nzc1NDcsImV4cCI6MjA5NDE1MzU0N30.-NONc0cweym8cNqvSfZt2JQUyrDSLdMz9OMZL2q-ork';
+const sb = createClient(SUPA_URL, SUPA_KEY);
+
+let currentUser = null;
+let fotoFiles = [];
+let autorFotoFile = null;
+let allComps = [];
+
+/* ── utils ─────────────────────────── */
+function slugify(str){ return String(str).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function toast(msg, type='ok'){
+  const wrap=document.getElementById('a-toasts');
+  const el=document.createElement('div');
+  el.className=`a-toast a-toast--${type}`;
+  const icon = type==='ok'
+    ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>`
+    : `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--pink)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
+  el.innerHTML=icon+msg;
+  wrap.appendChild(el);
+  setTimeout(()=>el.remove(),4000);
+}
+
+/* ── nav ────────────────────────────── */
+function switchSection(name){
+  document.querySelectorAll('.a-section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.a-nav__btn').forEach(b=>b.classList.remove('active'));
+  const sec=document.getElementById('section-'+name);
+  if(sec) sec.classList.add('active');
+  const btn=document.querySelector(`[data-section="${name}"]`);
+  if(btn) btn.classList.add('active');
+  const titles={resumen:'Resumen',fotos:'Fotografías',videos:'Vídeos',autores:'Autores',componentes:'Componentes',letras:'Letras',municipios:'Municipios'};
+  document.getElementById('topbar-title').textContent=titles[name]||name;
+}
+document.querySelectorAll('.a-nav__btn').forEach(b=>b.addEventListener('click',()=>switchSection(b.dataset.section)));
+
+/* ── auth ───────────────────────────── */
+document.getElementById('login-form').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const btn=document.getElementById('login-btn');
+  const err=document.getElementById('login-error');
+  const email=document.getElementById('login-email').value.trim();
+  const pass=document.getElementById('login-pass').value;
+  btn.disabled=true; btn.textContent='Entrando…'; err.style.display='none';
+  const {data,error}=await sb.auth.signInWithPassword({email,password:pass});
+  if(error){
+    err.textContent='Credenciales incorrectas.';
+    err.style.display='block';
+    btn.disabled=false; btn.textContent='Acceder';
+  } else {
+    currentUser=data.user; showPanel();
+  }
+});
+
+document.getElementById('btn-logout').addEventListener('click',async()=>{
+  await sb.auth.signOut(); currentUser=null;
+  document.getElementById('view-panel').style.display='none';
+  document.getElementById('view-login').style.display='';
+});
+
+function showPanel(){
+  document.getElementById('view-login').style.display='none';
+  document.getElementById('view-panel').style.display='';
+  if(currentUser) document.getElementById('topbar-email').textContent=currentUser.email;
+  loadAll();
+}
+
+/* ── stats ──────────────────────────── */
+async function loadStats(){
+  const [a,b,c,d]=await Promise.all([
+    sb.from('fotos').select('*',{count:'exact',head:true}),
+    sb.from('videos').select('*',{count:'exact',head:true}),
+    sb.from('autores_extra').select('*',{count:'exact',head:true}),
+    sb.from('componentes_extra').select('*',{count:'exact',head:true})
+  ]);
+  const grid=document.getElementById('stats-grid');
+  const vals=[a.count||0,b.count||0,c.count||0,d.count||0];
+  const labels=['Fotografías','Vídeos','Autores','Componentes'];
+  grid.innerHTML=vals.map((v,i)=>`<div class="a-stat"><span class="a-stat__val">${v}</span><span class="a-stat__label">${labels[i]}</span></div>`).join('');
+}
+
+/* ═══════════════ FOTOS ═══════════════ */
+const fotoFilesInput=document.getElementById('foto-files');
+fotoFilesInput.addEventListener('change',e=>{ fotoFiles=[...fotoFiles,...Array.from(e.target.files)]; renderFotoPreview(); });
+
+const dropzone=document.getElementById('foto-dropzone');
+dropzone.addEventListener('dragover',e=>{e.preventDefault();dropzone.classList.add('dragover');});
+dropzone.addEventListener('dragleave',()=>dropzone.classList.remove('dragover'));
+dropzone.addEventListener('drop',e=>{
+  e.preventDefault();dropzone.classList.remove('dragover');
+  fotoFiles=[...fotoFiles,...Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/'))];
+  renderFotoPreview();
+});
+
+function renderFotoPreview(){
+  const grid=document.getElementById('foto-preview');
+  grid.innerHTML=fotoFiles.map((f,i)=>`
+    <div class="a-preview-item">
+      <img src="${URL.createObjectURL(f)}" />
+      <button class="a-preview-item__remove" data-i="${i}">×</button>
+    </div>`).join('');
+  grid.querySelectorAll('.a-preview-item__remove').forEach(btn=>btn.addEventListener('click',()=>{
+    fotoFiles.splice(parseInt(btn.dataset.i),1); renderFotoPreview();
+  }));
+}
+
+document.getElementById('btn-upload-fotos').addEventListener('click',async()=>{
+  if(!fotoFiles.length){toast('Selecciona al menos una imagen.','err');return;}
+  const ag=document.getElementById('foto-agrupacion').value.trim();
+  const mun=document.getElementById('foto-municipio').value.trim();
+  const ano=parseInt(document.getElementById('foto-ano').value)||null;
+  const desc=document.getElementById('foto-desc').value.trim();
+  const agId=ag?slugify(ag):'general';
+  const btn=document.getElementById('btn-upload-fotos');
+  btn.disabled=true;
+  const prog=document.getElementById('foto-progress');
+  const fill=document.getElementById('foto-progress-fill');
+  const ptxt=document.getElementById('foto-progress-text');
+  prog.style.display='block';
+  let ok=0,errs=[];
+  for(let idx=0;idx<fotoFiles.length;idx++){
+    const f=fotoFiles[idx];
+    const ext=f.name.split('.').pop();
+    const path=`${agId}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    const {error:upErr}=await sb.storage.from('fotos').upload(path,f,{contentType:f.type});
+    if(upErr){errs.push(f.name);continue;}
+    const {data:urlD}=sb.storage.from('fotos').getPublicUrl(path);
+    const {error:dbErr}=await sb.from('fotos').insert({storage_path:path,url:urlD.publicUrl,agrupacion_id:agId,agrupacion_nombre:ag,municipio:mun,ano,descripcion:desc});
+    if(dbErr) errs.push(f.name+' (DB)'); else ok++;
+    fill.style.width=Math.round((idx+1)/fotoFiles.length*100)+'%';
+    ptxt.textContent=`Subiendo ${idx+1} de ${fotoFiles.length}…`;
+  }
+  btn.disabled=false; prog.style.display='none'; fill.style.width='0%';
+  fotoFiles=[]; renderFotoPreview(); fotoFilesInput.value='';
+  if(errs.length) toast(`${ok} subidas, ${errs.length} errores.`,'err');
+  else toast(`${ok} foto${ok!==1?'s':''} subida${ok!==1?'s':''} correctamente.`);
+  loadFotos(); loadStats();
+});
+
+async function loadFotos(){
+  const {data,error}=await sb.from('fotos').select('*').order('agrupacion_id').order('created_at',{ascending:false});
+  const tbody=document.getElementById('fotos-tbody');
+  document.getElementById('fotos-count').textContent=data?data.length:0;
+  if(error||!data){tbody.innerHTML=`<tr><td colspan="6" class="a-empty">Error al cargar.</td></tr>`;return;}
+  if(!data.length){tbody.innerHTML=`<tr><td colspan="6" class="a-empty">No hay fotografías todavía.</td></tr>`;return;}
+  tbody.innerHTML=data.map(f=>`
+    <tr id="foto-row-${f.id}">
+      <td><img class="a-table-thumb" src="${esc(f.url)}" loading="lazy"/></td>
+      <td>${esc(f.agrupacion_nombre||'—')}</td>
+      <td>${esc(f.municipio||'—')}</td>
+      <td>${f.ano||'—'}</td>
+      <td>
+        ${f.is_portada
+          ? `<span class="a-badge a-badge--green">Portada</span>`
+          : `<button class="a-btn-sm btn-set-portada" data-id="${f.id}" data-agid="${esc(f.agrupacion_id||'')}">Usar como portada</button>`}
+      </td>
+      <td><button class="a-btn-del" data-id="${f.id}" data-path="${esc(f.storage_path||'')}">Eliminar</button></td>
+    </tr>`).join('');
+  tbody.querySelectorAll('.btn-set-portada').forEach(btn=>btn.addEventListener('click',async()=>{
+    const agId=btn.dataset.agid;
+    const fotoId=btn.dataset.id;
+    // Clear portada for all photos of this agrupacion, then set this one
+    if(agId){await sb.from('fotos').update({is_portada:false}).eq('agrupacion_id',agId);}
+    await sb.from('fotos').update({is_portada:true}).eq('id',fotoId);
+    toast('Portada actualizada.'); loadFotos();
+  }));
+  tbody.querySelectorAll('.a-btn-del').forEach(btn=>btn.addEventListener('click',async()=>{
+    if(!confirm('¿Eliminar esta fotografía?'))return;
+    if(btn.dataset.path) await sb.storage.from('fotos').remove([btn.dataset.path]);
+    await sb.from('fotos').delete().eq('id',btn.dataset.id);
+    toast('Fotografía eliminada.'); loadFotos(); loadStats();
+  }));
+}
+
+/* ═══════════════ VÍDEOS ═══════════════ */
+document.getElementById('btn-add-video').addEventListener('click',async()=>{
+  const url=document.getElementById('vid-url').value.trim();
+  const ag=document.getElementById('vid-agrupacion').value.trim();
+  const titulo=document.getElementById('vid-titulo').value.trim();
+  const mun=document.getElementById('vid-municipio').value.trim();
+  const ano=parseInt(document.getElementById('vid-ano').value)||null;
+  const tipo=document.getElementById('vid-tipo').value;
+  if(!url){toast('La URL del vídeo es obligatoria.','err');return;}
+  const {error}=await sb.from('videos').insert({url,titulo,agrupacion_id:slugify(ag),agrupacion_nombre:ag,municipio:mun,municipio_slug:slugify(mun),ano,tipo});
+  if(error){toast('Error: '+error.message,'err');return;}
+  ['vid-url','vid-agrupacion','vid-titulo','vid-municipio','vid-ano'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('vid-tipo').value='';
+  toast('Vídeo añadido correctamente.'); loadVideos(); loadStats();
+});
+
+async function loadVideos(){
+  const {data,error}=await sb.from('videos').select('*').order('created_at',{ascending:false});
+  const tbody=document.getElementById('videos-tbody');
+  document.getElementById('videos-count').textContent=data?data.length:0;
+  if(error||!data){tbody.innerHTML=`<tr><td colspan="6" class="a-empty">Error al cargar.</td></tr>`;return;}
+  if(!data.length){tbody.innerHTML=`<tr><td colspan="6" class="a-empty">No hay vídeos todavía.</td></tr>`;return;}
+  const TC={comparsa:'blue',chirigota:'pink',cuarteto:'yellow',coro:'green',romancero:'yellow'};
+  tbody.innerHTML=data.map(v=>`
+    <tr>
+      <td>${esc(v.agrupacion_nombre||'—')}</td>
+      <td>${v.tipo?`<span class="a-badge a-badge--${TC[v.tipo]||'blue'}">${esc(v.tipo)}</span>`:'—'}</td>
+      <td>${esc(v.municipio||'—')}</td>
+      <td>${v.ano||'—'}</td>
+      <td><a href="${esc(v.url)}" target="_blank" style="color:var(--blue);font-size:12px">Ver →</a></td>
+      <td><button class="a-btn-del" data-id="${v.id}">Eliminar</button></td>
+    </tr>`).join('');
+  tbody.querySelectorAll('.a-btn-del').forEach(btn=>btn.addEventListener('click',async()=>{
+    if(!confirm('¿Eliminar este vídeo?'))return;
+    await sb.from('videos').delete().eq('id',btn.dataset.id);
+    toast('Vídeo eliminado.'); loadVideos(); loadStats();
+  }));
+}
+
+/* ═══════════════ AUTORES ═══════════════ */
+document.getElementById('autor-foto-file').addEventListener('change',e=>{
+  autorFotoFile=e.target.files[0]||null;
+  const prev=document.getElementById('autor-foto-preview');
+  if(autorFotoFile){prev.src=URL.createObjectURL(autorFotoFile);prev.style.display='block';}
+  else prev.style.display='none';
+});
+
+document.getElementById('btn-save-autor').addEventListener('click',async()=>{
+  const nombre=document.getElementById('autor-nombre').value.trim();
+  const mun=document.getElementById('autor-municipio').value.trim();
+  const bio=document.getElementById('autor-bio').value.trim();
+  if(!nombre){toast('El nombre es obligatorio.','err');return;}
+  const slug=slugify(nombre);
+  let foto_url='';
+  if(autorFotoFile){
+    const ext=autorFotoFile.name.split('.').pop();
+    const path=`autores/${slug}-${Date.now()}.${ext}`;
+    const {error:upErr}=await sb.storage.from('fotos').upload(path,autorFotoFile,{contentType:autorFotoFile.type});
+    if(upErr){toast('Error subiendo foto: '+upErr.message,'err');return;}
+    const {data:urlD}=sb.storage.from('fotos').getPublicUrl(path);
+    foto_url=urlD.publicUrl;
+  }
+  const payload={slug,nombre,municipio:mun,bio};
+  if(foto_url) payload.foto_url=foto_url;
+  const {error}=await sb.from('autores_extra').upsert(payload,{onConflict:'slug'});
+  if(error){toast('Error: '+error.message,'err');return;}
+  document.getElementById('autor-nombre').value='';
+  document.getElementById('autor-municipio').value='';
+  document.getElementById('autor-bio').value='';
+  document.getElementById('autor-foto-file').value='';
+  document.getElementById('autor-foto-preview').style.display='none';
+  autorFotoFile=null;
+  toast('Autor guardado correctamente.'); loadAutores(); loadStats();
+});
+
+async function loadAutores(){
+  const {data,error}=await sb.from('autores_extra').select('*').order('nombre');
+  const tbody=document.getElementById('autores-tbody');
+  document.getElementById('autores-count').textContent=data?data.length:0;
+  if(error||!data){tbody.innerHTML=`<tr><td colspan="5" class="a-empty">Error al cargar.</td></tr>`;return;}
+  if(!data.length){tbody.innerHTML=`<tr><td colspan="5" class="a-empty">No hay autores todavía.</td></tr>`;return;}
+  tbody.innerHTML=data.map(a=>`
+    <tr>
+      <td>${a.foto_url?`<img class="a-table-thumb" style="border-radius:50%" src="${esc(a.foto_url)}" loading="lazy"/>`:'—'}</td>
+      <td style="font-weight:600;color:var(--white)">${esc(a.nombre)}</td>
+      <td>${esc(a.municipio||'—')}</td>
+      <td>${a.bio?'<span class="a-badge a-badge--green">Sí</span>':'—'}</td>
+      <td style="display:flex;gap:6px">
+        <button class="a-btn-sm btn-edit-autor" data-slug="${esc(a.slug)}">Editar</button>
+        <button class="a-btn-del" data-id="${a.id}">Eliminar</button>
+      </td>
+    </tr>`).join('');
+  tbody.querySelectorAll('.a-btn-del').forEach(btn=>btn.addEventListener('click',async()=>{
+    if(!confirm('¿Eliminar este autor?'))return;
+    await sb.from('autores_extra').delete().eq('id',btn.dataset.id);
+    toast('Autor eliminado.'); loadAutores(); loadStats();
+  }));
+  tbody.querySelectorAll('.btn-edit-autor').forEach(btn=>btn.addEventListener('click',async()=>{
+    const {data:a}=await sb.from('autores_extra').select('*').eq('slug',btn.dataset.slug).maybeSingle();
+    if(!a)return;
+    document.getElementById('autor-nombre').value=a.nombre;
+    document.getElementById('autor-municipio').value=a.municipio||'';
+    document.getElementById('autor-bio').value=a.bio||'';
+    if(a.foto_url){document.getElementById('autor-foto-preview').src=a.foto_url;document.getElementById('autor-foto-preview').style.display='block';}
+    switchSection('autores');
+    document.getElementById('autor-nombre').focus();
+  }));
+  const dl=document.getElementById('autores-datalist');
+  dl.innerHTML=data.map(a=>`<option value="${esc(a.nombre)}"/>`).join('');
+}
+
+/* ═══════════════ COMPONENTES ═══════════════ */
+document.getElementById('btn-add-comp').addEventListener('click',async()=>{
+  const nombre=document.getElementById('comp-nombre').value.trim();
+  const ag=document.getElementById('comp-agrupacion').value.trim();
+  const mun=document.getElementById('comp-municipio').value.trim();
+  const ano=parseInt(document.getElementById('comp-ano').value)||null;
+  const rol=document.getElementById('comp-rol').value.trim();
+  if(!nombre){toast('El nombre del componente es obligatorio.','err');return;}
+  const {error}=await sb.from('componentes_extra').insert({nombre,slug:slugify(nombre),agrupacion_id:slugify(ag),agrupacion_nombre:ag,municipio:mun,ano,rol});
+  if(error){toast('Error: '+error.message,'err');return;}
+  ['comp-nombre','comp-agrupacion','comp-municipio','comp-ano','comp-rol'].forEach(id=>document.getElementById(id).value='');
+  toast('Componente añadido.'); loadComponentes(); loadStats();
+});
+
+document.getElementById('comp-search').addEventListener('input',e=>{
+  const q=e.target.value.toLowerCase();
+  const filtered=q?allComps.filter(c=>(c.nombre||'').toLowerCase().includes(q)||(c.agrupacion_nombre||'').toLowerCase().includes(q)||(c.rol||'').toLowerCase().includes(q)):allComps;
+  renderCompTable(filtered);
+});
+
+async function loadComponentes(){
+  const {data,error}=await sb.from('componentes_extra').select('*').order('nombre');
+  document.getElementById('comp-count').textContent=data?data.length:0;
+  if(error||!data){document.getElementById('comp-tbody').innerHTML=`<tr><td colspan="6" class="a-empty">Error al cargar.</td></tr>`;return;}
+  allComps=data;
+  renderCompTable(data);
+  const names=[...new Set(data.map(c=>c.nombre))].sort();
+  document.getElementById('comp-datalist').innerHTML=names.map(n=>`<option value="${esc(n)}"/>`).join('');
+}
+
+function renderCompTable(data){
+  const tbody=document.getElementById('comp-tbody');
+  if(!data.length){tbody.innerHTML=`<tr><td colspan="6" class="a-empty">No hay componentes todavía.</td></tr>`;return;}
+  tbody.innerHTML=data.map(c=>`
+    <tr>
+      <td style="font-weight:600;color:var(--white)">${esc(c.nombre)}</td>
+      <td>${esc(c.agrupacion_nombre||'—')}</td>
+      <td>${esc(c.municipio||'—')}</td>
+      <td>${c.ano||'—'}</td>
+      <td><span class="a-badge a-badge--blue">${esc(c.rol||'—')}</span></td>
+      <td><button class="a-btn-del" data-id="${c.id}">Eliminar</button></td>
+    </tr>`).join('');
+  tbody.querySelectorAll('.a-btn-del').forEach(btn=>btn.addEventListener('click',async()=>{
+    if(!confirm('¿Eliminar este registro?'))return;
+    await sb.from('componentes_extra').delete().eq('id',btn.dataset.id);
+    toast('Eliminado.'); loadComponentes(); loadStats();
+  }));
+}
+
+/* ═══════════════ LETRAS ═══════════════ */
+let allLetras = [];
+let letraEditId = null;
+
+function clearLetraForm() {
+  document.getElementById('letra-agrupacion').value = '';
+  document.getElementById('letra-tipo').value = 'Presentación';
+  document.getElementById('letra-titulo').value = '';
+  document.getElementById('letra-orden').value = '0';
+  document.getElementById('letra-contenido').value = '';
+  document.getElementById('letra-edit-id').value = '';
+  document.getElementById('btn-cancel-letra').style.display = 'none';
+  document.getElementById('btn-save-letra').textContent = 'Guardar letra';
+  letraEditId = null;
+}
+
+document.getElementById('btn-cancel-letra').addEventListener('click', clearLetraForm);
+
+document.getElementById('letras-search').addEventListener('input', e => {
+  const q = e.target.value.toLowerCase();
+  const filtered = q ? allLetras.filter(l => (l.agrupacion_id||'').toLowerCase().includes(q)) : allLetras;
+  renderLetrasTable(filtered);
+});
+
+document.getElementById('btn-save-letra').addEventListener('click', async () => {
+  const ag = document.getElementById('letra-agrupacion').value.trim();
+  const tipo = document.getElementById('letra-tipo').value;
+  const titulo = document.getElementById('letra-titulo').value.trim();
+  const orden = parseInt(document.getElementById('letra-orden').value) || 0;
+  const contenido = document.getElementById('letra-contenido').value.trim();
+  if (!ag) { toast('El nombre de la agrupación es obligatorio.', 'err'); return; }
+  if (!contenido) { toast('El contenido de la letra es obligatorio.', 'err'); return; }
+  const agrupacion_id = slugify(ag);
+  const btn = document.getElementById('btn-save-letra');
+  btn.disabled = true;
+  let error;
+  if (letraEditId) {
+    ({ error } = await sb.from('letras').update({ agrupacion_id, tipo, titulo, contenido, orden, updated_at: new Date().toISOString() }).eq('id', letraEditId));
+  } else {
+    ({ error } = await sb.from('letras').insert({ agrupacion_id, tipo, titulo, contenido, orden }));
+  }
+  btn.disabled = false;
+  if (error) { toast('Error: ' + error.message, 'err'); return; }
+  clearLetraForm();
+  toast(letraEditId ? 'Letra actualizada.' : 'Letra añadida correctamente.');
+  loadLetras();
+});
+
+async function loadLetras() {
+  const { data, error } = await sb.from('letras').select('*').order('agrupacion_id').order('orden').order('tipo');
+  const tbody = document.getElementById('letras-tbody');
+  document.getElementById('letras-count').textContent = data ? data.length : 0;
+  if (error || !data) { tbody.innerHTML = `<tr><td colspan="5" class="a-empty">Error al cargar.</td></tr>`; return; }
+  allLetras = data;
+  renderLetrasTable(data);
+}
+
+const TIPO_BADGE = { 'Pasodoble': 'blue', 'Cuplé': 'yellow', 'Presentación': 'green', 'Popurrí': 'pink', 'Pregón': 'yellow' };
+
+function renderLetrasTable(data) {
+  const tbody = document.getElementById('letras-tbody');
+  if (!data.length) { tbody.innerHTML = `<tr><td colspan="5" class="a-empty">No hay letras todavía.</td></tr>`; return; }
+  tbody.innerHTML = data.map(l => `
+    <tr>
+      <td style="font-weight:600;color:var(--white)">${esc(l.agrupacion_id||'—')}</td>
+      <td><span class="a-badge a-badge--${TIPO_BADGE[l.tipo]||'blue'}">${esc(l.tipo)}</span></td>
+      <td style="color:var(--gray4);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(l.titulo||'—')}</td>
+      <td style="color:var(--gray3)">${l.orden}</td>
+      <td style="display:flex;gap:6px">
+        <button class="a-btn-sm btn-edit-letra" data-id="${l.id}">Editar</button>
+        <button class="a-btn-del" data-id="${l.id}">Eliminar</button>
+      </td>
+    </tr>`).join('');
+  tbody.querySelectorAll('.btn-edit-letra').forEach(btn => btn.addEventListener('click', async () => {
+    const { data: l } = await sb.from('letras').select('*').eq('id', btn.dataset.id).maybeSingle();
+    if (!l) return;
+    letraEditId = l.id;
+    document.getElementById('letra-agrupacion').value = l.agrupacion_id || '';
+    document.getElementById('letra-tipo').value = l.tipo || 'Pasodoble';
+    document.getElementById('letra-titulo').value = l.titulo || '';
+    document.getElementById('letra-orden').value = l.orden || 0;
+    document.getElementById('letra-contenido').value = l.contenido || '';
+    document.getElementById('letra-edit-id').value = l.id;
+    document.getElementById('btn-cancel-letra').style.display = '';
+    document.getElementById('btn-save-letra').textContent = 'Actualizar letra';
+    switchSection('letras');
+    document.getElementById('letra-agrupacion').focus();
+  }));
+  tbody.querySelectorAll('.a-btn-del').forEach(btn => btn.addEventListener('click', async () => {
+    if (!confirm('¿Eliminar esta letra?')) return;
+    await sb.from('letras').delete().eq('id', btn.dataset.id);
+    toast('Letra eliminada.'); loadLetras();
+  }));
+}
+
+/* ═══════════════ MUNICIPIOS ═══════════════ */
+let munFotoFile = null;
+
+document.getElementById('mun-foto-file').addEventListener('change', e => {
+  munFotoFile = e.target.files[0] || null;
+  const prev = document.getElementById('mun-foto-preview');
+  if (munFotoFile) { prev.src = URL.createObjectURL(munFotoFile); prev.style.display = 'block'; }
+  else prev.style.display = 'none';
+});
+
+document.getElementById('mun-edit-slug').addEventListener('change', async e => {
+  const slug = e.target.value;
+  if (!slug) return;
+  const status = document.getElementById('mun-load-status');
+  status.textContent = 'Cargando datos guardados…';
+  const { data } = await sb.from('municipios_extra').select('*').eq('slug', slug).maybeSingle();
+  if (data) {
+    document.getElementById('mun-edit-desc').value = data.descripcion || '';
+    document.getElementById('mun-edit-color').value = data.color || '#3986ff';
+    if (data.foto_url) {
+      document.getElementById('mun-foto-preview').src = data.foto_url;
+      document.getElementById('mun-foto-preview').style.display = 'block';
+    } else {
+      document.getElementById('mun-foto-preview').style.display = 'none';
+    }
+    status.textContent = 'Datos cargados.';
+  } else {
+    status.textContent = 'Sin datos guardados todavía.';
+    document.getElementById('mun-edit-desc').value = '';
+    document.getElementById('mun-edit-color').value = '#3986ff';
+    document.getElementById('mun-foto-preview').style.display = 'none';
+  }
+});
+
+document.getElementById('btn-save-municipio').addEventListener('click', async () => {
+  const slug = document.getElementById('mun-edit-slug').value;
+  if (!slug) { toast('Selecciona un municipio.', 'err'); return; }
+  const nombre = document.getElementById('mun-edit-slug').options[document.getElementById('mun-edit-slug').selectedIndex].textContent;
+  const descripcion = document.getElementById('mun-edit-desc').value.trim();
+  const color = document.getElementById('mun-edit-color').value;
+  const btn = document.getElementById('btn-save-municipio');
+  btn.disabled = true;
+  const { data: existing } = await sb.from('municipios_extra').select('foto_url,storage_path').eq('slug', slug).maybeSingle();
+  let foto_url = existing ? (existing.foto_url || '') : '';
+  let new_storage_path = existing ? (existing.storage_path || '') : '';
+  if (munFotoFile) {
+    // Delete old file from storage if it exists
+    if (existing && existing.storage_path) {
+      await sb.storage.from('fotos').remove([existing.storage_path]);
+    }
+    const ext = munFotoFile.name.split('.').pop();
+    const path = `municipios/${slug}-${Date.now()}.${ext}`;
+    const { error: upErr } = await sb.storage.from('fotos').upload(path, munFotoFile, { contentType: munFotoFile.type });
+    if (upErr) { toast('Error subiendo foto: ' + upErr.message, 'err'); btn.disabled = false; return; }
+    const { data: urlD } = sb.storage.from('fotos').getPublicUrl(path);
+    foto_url = urlD.publicUrl;
+    new_storage_path = path;
+  }
+  const payload = { slug, nombre, descripcion, color, foto_url, storage_path: new_storage_path, updated_at: new Date().toISOString() };
+  const { error } = await sb.from('municipios_extra').upsert(payload, { onConflict: 'slug' });
+  btn.disabled = false;
+  if (error) { toast('Error: ' + error.message, 'err'); return; }
+  munFotoFile = null;
+  document.getElementById('mun-foto-file').value = '';
+  toast('Municipio guardado correctamente.');
+  loadMunicipios();
+});
+
+async function loadMunicipios() {
+  const { data, error } = await sb.from('municipios_extra').select('*').order('nombre');
+  const tbody = document.getElementById('mun-tbody');
+  document.getElementById('mun-count').textContent = data ? data.length : 0;
+  if (error || !data) { tbody.innerHTML = `<tr><td colspan="5" class="a-empty">Error al cargar.</td></tr>`; return; }
+  if (!data.length) { tbody.innerHTML = `<tr><td colspan="5" class="a-empty">No hay municipios configurados todavía.</td></tr>`; return; }
+  tbody.innerHTML = data.map(m => `
+    <tr>
+      <td>${m.foto_url ? `<img class="a-table-thumb" src="${esc(m.foto_url)}" loading="lazy" style="border-radius:6px"/>` : '—'}</td>
+      <td style="font-weight:600;color:var(--white)">${esc(m.nombre || m.slug)}</td>
+      <td><span style="display:inline-block;width:18px;height:18px;border-radius:50%;background:${esc(m.color||'#3986ff')};vertical-align:middle;margin-right:6px"></span>${esc(m.color||'—')}</td>
+      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;color:var(--gray3)">${esc((m.descripcion||'').slice(0,80))}${(m.descripcion||'').length>80?'…':''}</td>
+      <td>
+        <button class="a-btn-sm btn-edit-mun" data-slug="${esc(m.slug)}">Editar</button>
+        <button class="a-btn-del" data-id="${m.id}" style="margin-left:4px">Eliminar</button>
+      </td>
+    </tr>`).join('');
+  tbody.querySelectorAll('.btn-edit-mun').forEach(btn => btn.addEventListener('click', () => {
+    document.getElementById('mun-edit-slug').value = btn.dataset.slug;
+    document.getElementById('mun-edit-slug').dispatchEvent(new Event('change'));
+    switchSection('municipios');
+    document.getElementById('mun-edit-slug').focus();
+  }));
+  tbody.querySelectorAll('.a-btn-del').forEach(btn => btn.addEventListener('click', async () => {
+    if (!confirm('¿Eliminar configuración de este municipio?')) return;
+    await sb.from('municipios_extra').delete().eq('id', btn.dataset.id);
+    toast('Eliminado.'); loadMunicipios();
+  }));
+}
+
+/* ═══════════════ DATALISTS del CSV ═══════════════ */
+async function loadCSVDatalist(){
+  const CSV='https://docs.google.com/spreadsheets/d/e/2PACX-1vSGT9g-Hpp8Ql21aTvDaHaixurmHgrja7_00wC6bPrDDFQ0NEauiz1rFZDlhgh8QBJsttjUsqQNFu99/pub?gid=1311976573&single=true&output=csv';
+  try{
+    const res=await fetch(CSV);
+    const text=await res.text();
+    const lines=text.split('\n').slice(1);
+    const agSet=new Set(), compSet=new Set();
+    lines.forEach(line=>{
+      // Simple CSV split (handles quoted fields partially)
+      const cols=line.split(',');
+      if(cols[1]) agSet.add(cols[1].replace(/^"|"$/g,'').trim());
+      const compCol=cols[5]||'';
+      compCol.replace(/^"|"$/g,'').split(';').forEach(c=>{const t=c.trim();if(t) compSet.add(t);});
+    });
+    const agDl=document.getElementById('ag-datalist');
+    agDl.innerHTML=[...agSet].filter(Boolean).sort().map(a=>`<option value="${esc(a)}"/>`).join('');
+    const cdl=document.getElementById('comp-datalist');
+    const existing=cdl.innerHTML;
+    if(!existing) cdl.innerHTML=[...compSet].filter(Boolean).sort().map(c=>`<option value="${esc(c)}"/>`).join('');
+  }catch(e){}
+}
+
+/* ═══════════════ BOOT ═══════════════ */
+async function loadAll(){
+  await Promise.all([loadFotos(),loadVideos(),loadAutores(),loadComponentes(),loadStats(),loadCSVDatalist(),loadMunicipios(),loadLetras()]);
+}
+
+(async()=>{
+  const {data:{session}}=await sb.auth.getSession();
+  if(session){ currentUser=session.user; showPanel(); }
+  else { document.getElementById('view-login').style.display=''; }
+
+  sb.auth.onAuthStateChange((event,_session)=>{
+    (async()=>{
+      if(event==='SIGNED_OUT'){ currentUser=null; document.getElementById('view-panel').style.display='none'; document.getElementById('view-login').style.display=''; }
+    })();
+  });
+})();
+</script>
+</body>
+</html>

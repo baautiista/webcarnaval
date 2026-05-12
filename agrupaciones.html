@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agrupaciones — Archivo del Carnaval del Campo de Gibraltar</title>
+  <meta name="description" content="Explora todas las agrupaciones del Carnaval del Campo de Gibraltar. Filtra por municipio, modalidad, decada, premios y mas.">
+  <meta property="og:title" content="Agrupaciones — Archivo del Carnaval del Campo de Gibraltar">
+  <meta property="og:description" content="Catalogo completo de agrupaciones del Carnaval del Campo de Gibraltar.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="canonical" href="https://archivocarnavalcg.es/agrupaciones.html">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"Agrupaciones","url":"https://archivocarnavalcg.es/agrupaciones.html","isPartOf":{"@type":"WebSite","name":"Archivo del Carnaval del Campo de Gibraltar","url":"https://archivocarnavalcg.es/"}}</script>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div id="navbar-placeholder"></div>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="page-hero-bg"></div>
+  <div class="container page-hero-content">
+    <nav class="page-breadcrumb" aria-label="Ruta de navegacion">
+      <a href="index.html">Inicio</a>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+      <span>Agrupaciones</span>
+    </nav>
+    <h1 class="page-title">Agrupaciones</h1>
+    <p class="page-subtitle">El catalogo completo del Carnaval del Campo de Gibraltar. Chirigotas, comparsas, coros, cuartetos y romanceros de todos los municipios y decadas.</p>
+  </div>
+</section>
+
+<!-- FILTERS + RESULTS -->
+<section class="section section-dark">
+  <div class="container">
+
+    <!-- FILTERS BAR -->
+    <div class="filters-bar" role="search" aria-label="Filtros de busqueda">
+      <!-- Search -->
+      <div class="search-field" style="flex:1 1 220px">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
+        <input
+          type="text"
+          id="filter-search"
+          placeholder="Buscar agrupacion, autor, municipio..."
+          autocomplete="off"
+          aria-label="Buscar agrupaciones"
+        >
+      </div>
+
+      <!-- Municipio -->
+      <div class="filter-group">
+        <label class="filter-label" for="filter-municipio">Municipio</label>
+        <select id="filter-municipio" class="filter-select" aria-label="Filtrar por municipio">
+          <option value="">Todos</option>
+        </select>
+      </div>
+
+      <!-- Modalidad -->
+      <div class="filter-group">
+        <label class="filter-label" for="filter-modalidad">Modalidad</label>
+        <select id="filter-modalidad" class="filter-select" aria-label="Filtrar por modalidad">
+          <option value="">Todas</option>
+        </select>
+      </div>
+
+      <!-- Decada / Año -->
+      <div class="filter-group">
+        <label class="filter-label" for="filter-decada">Decada</label>
+        <select id="filter-decada" class="filter-select" aria-label="Filtrar por decada">
+          <option value="">Todas</option>
+        </select>
+      </div>
+
+      <!-- Premios -->
+      <div class="filter-group">
+        <label class="filter-label" for="filter-premios">Premios</label>
+        <select id="filter-premios" class="filter-select" aria-label="Filtrar por premios">
+          <option value="">Todos</option>
+          <option value="si">Con premios</option>
+          <option value="no">Sin premios</option>
+        </select>
+      </div>
+
+      <!-- Reset -->
+      <button
+        id="btn-reset-filters"
+        class="btn btn-secondary btn-sm"
+        aria-label="Limpiar filtros"
+        style="align-self:flex-end;white-space:nowrap"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
+        Limpiar
+      </button>
+    </div>
+
+    <!-- RESULTS COUNT -->
+    <p class="results-count" id="results-count" aria-live="polite">
+      <span class="loading-text" style="color:var(--gray3)">Cargando archivo...</span>
+    </p>
+
+    <!-- CARDS GRID -->
+    <div id="agrupaciones-list" class="cards-grid" role="list" aria-label="Lista de agrupaciones">
+      <!-- Loading state -->
+      <div id="loading-state" class="loading-spinner" style="grid-column:1/-1;display:flex;flex-direction:column;align-items:center;gap:16px;padding:80px 0">
+        <div class="spinner" style="width:40px;height:40px;border:3px solid rgba(255,255,255,0.08);border-top-color:var(--blue);border-radius:50%;animation:spin 0.7s linear infinite"></div>
+        <span style="font-family:var(--font-sans);font-size:14px;color:var(--gray3)">Cargando agrupaciones...</span>
+      </div>
+    </div>
+
+    <!-- CARGAR MAS -->
+    <div id="load-more-wrap" style="display:none;text-align:center;margin-top:48px">
+      <button id="btn-load-more" class="btn btn-secondary btn-lg">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>
+        Cargar mas agrupaciones
+      </button>
+      <p id="load-more-info" style="margin-top:12px;font-family:var(--font-sans);font-size:13px;color:var(--gray3)"></p>
+    </div>
+
+  </div>
+</section>
+
+<div id="footer-placeholder"></div>
+
+<style>
+@keyframes spin { to { transform: rotate(360deg); } }
+.empty-state {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 24px;
+  text-align: center;
+  gap: 16px;
+}
+.empty-state-icon {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.04);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--gray2);
+  margin-bottom: 8px;
+}
+.empty-state-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.empty-state-desc {
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--gray4);
+  max-width: 400px;
+  font-style: italic;
+}
+</style>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  const PAGE_SIZE = 24;
+
+  // State
+  let allResults = [];    // filtered full list
+  let visibleCount = 0;  // how many are currently shown
+  let searchDebounce;
+
+  // DOM refs (resolved after DOMContentLoaded)
+  let elSearch, elMunicipio, elModalidad, elDecada, elPremios;
+  let elResultsCount, elList, elLoadMoreWrap, elLoadMoreBtn, elLoadMoreInfo;
+
+  /* ---- Helpers ---- */
+  function getFilters() {
+    return {
+      q:         elSearch.value.trim(),
+      municipio: elMunicipio.value,
+      modalidad: elModalidad.value,
+      decada:    elDecada.value,
+      premios:   elPremios.value
+    };
+  }
+
+  async function applyFilters() {
+    const f = getFilters();
+    const apiFilters = {};
+    if (f.q)         apiFilters.q         = f.q;
+    if (f.municipio) apiFilters.municipio  = f.municipio;
+    if (f.modalidad) apiFilters.modalidad  = f.modalidad;
+    if (f.decada)    apiFilters.decada     = f.decada;
+
+    let list = await DataAPI.getAgrupaciones(apiFilters);
+
+    // Premios filter (client-side post-process)
+    if (f.premios === 'si')  list = list.filter(a => a.premios.length > 0);
+    if (f.premios === 'no')  list = list.filter(a => a.premios.length === 0);
+
+    allResults = list;
+    visibleCount = 0;
+    renderResults();
+  }
+
+  function renderResults() {
+    const total = allResults.length;
+    const toShow = allResults.slice(0, visibleCount + PAGE_SIZE);
+    visibleCount = toShow.length;
+
+    // Update count
+    elResultsCount.innerHTML = total === 0
+      ? 'Sin resultados'
+      : `<strong>${total.toLocaleString('es-ES')}</strong> agrupacion${total !== 1 ? 'es' : ''} encontrada${total !== 1 ? 's' : ''}`;
+
+    // Render cards or empty state
+    if (total === 0) {
+      elList.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="36" height="36"><path stroke-linecap="round" stroke-linejoin="round" d="M15.182 15.182a4.5 4.5 0 01-6.364 0M21 12a9 9 0 11-18 0 9 9 0 0118 0zM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75zm-.375 0h.008v.015h-.008V9.75zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75zm-.375 0h.008v.015h-.008V9.75z"/></svg>
+          </div>
+          <p class="empty-state-title">No se encontraron agrupaciones</p>
+          <p class="empty-state-desc">Prueba a cambiar los filtros o a ampliar la busqueda.</p>
+          <button class="btn btn-secondary btn-sm" onclick="resetFilters()">Limpiar filtros</button>
+        </div>`;
+      elLoadMoreWrap.style.display = 'none';
+      return;
+    }
+
+    elList.innerHTML = toShow.map(ag => renderAgrupacionCard(ag)).join('');
+
+    // Load more button
+    const remaining = total - visibleCount;
+    if (remaining > 0) {
+      elLoadMoreWrap.style.display = 'block';
+      elLoadMoreInfo.textContent = `Mostrando ${visibleCount.toLocaleString('es-ES')} de ${total.toLocaleString('es-ES')} agrupaciones`;
+    } else {
+      elLoadMoreWrap.style.display = 'none';
+    }
+  }
+
+  function resetFilters() {
+    elSearch.value = '';
+    elMunicipio.value = '';
+    elModalidad.value = '';
+    elDecada.value = '';
+    elPremios.value = '';
+    applyFilters();
+  }
+
+  /* ---- Populate selects from data ---- */
+  async function populateSelects() {
+    const [municipios, modalidades, decadas] = await Promise.all([
+      DataAPI.getMunicipios(),
+      DataAPI.getModalidades(),
+      DataAPI.getDecadas()
+    ]);
+
+    municipios.forEach(m => {
+      if (!m.nombre) return;
+      const opt = document.createElement('option');
+      opt.value = m.slug || m.nombre;
+      opt.textContent = m.nombre;
+      elMunicipio.appendChild(opt);
+    });
+
+    modalidades.forEach(mod => {
+      if (!mod) return;
+      const opt = document.createElement('option');
+      opt.value = mod;
+      opt.textContent = mod;
+      elModalidad.appendChild(opt);
+    });
+
+    decadas.forEach(dec => {
+      if (!dec) return;
+      const opt = document.createElement('option');
+      opt.value = String(dec);
+      opt.textContent = dec + 's';
+      elDecada.appendChild(opt);
+    });
+  }
+
+  /* ---- Init ---- */
+  document.addEventListener('DOMContentLoaded', async () => {
+    // Resolve DOM
+    elSearch       = document.getElementById('filter-search');
+    elMunicipio    = document.getElementById('filter-municipio');
+    elModalidad    = document.getElementById('filter-modalidad');
+    elDecada       = document.getElementById('filter-decada');
+    elPremios      = document.getElementById('filter-premios');
+    elResultsCount = document.getElementById('results-count');
+    elList         = document.getElementById('agrupaciones-list');
+    elLoadMoreWrap = document.getElementById('load-more-wrap');
+    elLoadMoreBtn  = document.getElementById('btn-load-more');
+    elLoadMoreInfo = document.getElementById('load-more-info');
+
+    // Expose reset globally for empty state button
+    window.resetFilters = resetFilters;
+
+    // Read URL params for pre-filtering
+    const params = new URLSearchParams(location.search);
+    const preQ         = params.get('q')         || '';
+    const preMunicipio = params.get('municipio')  || '';
+    const preModalidad = params.get('modalidad')  || '';
+    const preDecada    = params.get('decada')     || '';
+
+    // Populate filter selects and pre-load portadas in parallel
+    await Promise.all([
+      populateSelects(),
+      typeof loadPortadas === 'function' ? loadPortadas() : Promise.resolve()
+    ]);
+
+    // Apply URL pre-filters
+    if (preQ)         elSearch.value        = preQ;
+    if (preMunicipio) elMunicipio.value     = preMunicipio;
+    if (preModalidad) elModalidad.value     = preModalidad;
+    if (preDecada)    elDecada.value        = preDecada;
+
+    // Initial render
+    await applyFilters();
+
+    // Remove loading state if still present
+    const loadingEl = document.getElementById('loading-state');
+    if (loadingEl) loadingEl.remove();
+
+    /* ---- Event Listeners ---- */
+    // Search with debounce
+    elSearch.addEventListener('input', () => {
+      clearTimeout(searchDebounce);
+      searchDebounce = setTimeout(() => applyFilters(), 300);
+    });
+
+    // Selects — immediate
+    [elMunicipio, elModalidad, elDecada, elPremios].forEach(sel => {
+      sel.addEventListener('change', () => applyFilters());
+    });
+
+    // Reset button
+    document.getElementById('btn-reset-filters').addEventListener('click', () => resetFilters());
+
+    // Load more
+    elLoadMoreBtn.addEventListener('click', () => {
+      renderResults();
+      // Scroll to newly loaded content
+      const cards = elList.querySelectorAll('.card');
+      const firstNew = cards[visibleCount - PAGE_SIZE];
+      if (firstNew) firstNew.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+}());
+</script>
+</body>
+</html>
