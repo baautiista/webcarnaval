@@ -173,8 +173,6 @@
     .crono-item__autor { font-family: var(--font-sans); font-size: 12px; color: var(--text-muted); }
     .crono-item__premio { font-family: var(--font-sans); font-size: 11px; color: #a07800; display: flex; align-items: center; gap: 3px; }
 
-    .loading-state--page { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 16px; padding: 120px 24px; font-family: var(--font-sans); font-size: 14px; color: var(--text-muted); }
-    .loading-spinner { width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--municipio-color); border-radius: 50%; animation: spin 0.8s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
     .not-found { padding: 80px 24px; text-align: center; }
@@ -212,12 +210,6 @@
 
   <!-- MAIN -->
   <main class="site-main" id="main-content">
-
-    <!-- LOADING STATE (full page) -->
-    <div id="loading-state" class="loading-state loading-state--page">
-      <div class="loading-spinner"></div>
-      <p>Cargando municipio…</p>
-    </div>
 
     <!-- NOT FOUND -->
     <div id="not-found" class="not-found" hidden>
@@ -374,7 +366,6 @@
     const autoresEmpty    = document.getElementById('autores-empty');
     const cronologiaList  = document.getElementById('cronologia-list');
     const cronologiaEmpty = document.getElementById('cronologia-empty');
-    const loadingState    = document.getElementById('loading-state');
     const notFound        = document.getElementById('not-found');
     const pageBody        = document.getElementById('page-body');
 
@@ -425,8 +416,7 @@
         renderCronologia(agrupaciones);
         bindAgFilters();
 
-        loadingState.hidden = true;
-        pageBody.hidden = false;
+                pageBody.hidden = false;
 
         /* Update <title> */
         document.title = `${mun.nombre} · Archivo del Carnaval del Campo de Gibraltar`;
@@ -687,8 +677,7 @@
 
     /* ─── Not found ──────────────────────────────────────── */
     function showNotFound () {
-      loadingState.hidden = true;
-      pageBody.hidden     = true;
+            pageBody.hidden     = true;
       notFound.hidden     = false;
       document.getElementById('municipio-hero').hidden = true;
     }
