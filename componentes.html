@@ -80,13 +80,94 @@
     </div>
   </section>
 
+  <!-- CTA REGISTER -->
+  <section class="section" style="padding:64px 0;background:var(--dark2)">
+    <div class="container" style="text-align:center">
+      <div style="max-width:560px;margin:0 auto">
+        <div style="width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,var(--blue),var(--pink));display:flex;align-items:center;justify-content:center;margin:0 auto 20px">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+        </div>
+        <h2 style="font-family:var(--font-display);font-size:clamp(22px,3vw,30px);font-weight:700;color:var(--white);margin-bottom:12px">¿Eres componente del carnaval?</h2>
+        <p style="font-family:var(--font-body);font-size:17px;color:var(--gray4);line-height:1.6;margin-bottom:28px;font-style:italic">Apúntate al archivo y enriquece tu historial carnavalero. Si ya apareces en el listado, también puedes reclamar tu perfil.</p>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+          <button class="btn btn-primary" id="btn-apuntarme">Apuntarme como componente</button>
+          <button class="btn btn-outline" id="btn-soy-yo">Soy yo, reclamar perfil</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
 </main>
+
+<!-- REGISTRATION MODAL -->
+<div id="claim-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:900;align-items:center;justify-content:center;padding:16px;overflow-y:auto">
+  <div style="background:#161622;border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:36px;width:100%;max-width:520px;margin:auto;position:relative">
+    <button id="claim-close" style="position:absolute;top:16px;right:16px;background:rgba(255,255,255,.06);border:none;border-radius:8px;width:32px;height:32px;cursor:pointer;display:flex;align-items:center;justify-content:center">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <h2 id="claim-modal-title" style="font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--white);margin-bottom:6px">Apuntarme como componente</h2>
+    <p style="font-family:var(--font-sans);font-size:13px;color:#6b7280;margin-bottom:24px">Tu solicitud será revisada por el equipo antes de ser publicada.</p>
+
+    <!-- claim mode: existing profile -->
+    <div id="claim-existing-row" style="display:none;margin-bottom:18px">
+      <label style="display:block;font-family:var(--font-sans);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9ca3af;margin-bottom:6px">Perfil existente que reclamas</label>
+      <select id="claim-existing-select" style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:white;font-family:var(--font-sans);font-size:13px;padding:9px 12px;outline:none;appearance:none">
+        <option value="">— Elige tu nombre en el listado —</option>
+      </select>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+      <div style="grid-column:1/-1">
+        <label style="display:block;font-family:var(--font-sans);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9ca3af;margin-bottom:6px">Nombre completo *</label>
+        <input id="claim-nombre" type="text" placeholder="Tu nombre y apellidos" style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:white;font-family:var(--font-sans);font-size:13px;padding:9px 12px;outline:none" />
+      </div>
+      <div style="grid-column:1/-1">
+        <label style="display:block;font-family:var(--font-sans);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9ca3af;margin-bottom:6px">Correo electrónico *</label>
+        <input id="claim-email" type="email" placeholder="tu@correo.com" style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:white;font-family:var(--font-sans);font-size:13px;padding:9px 12px;outline:none" />
+      </div>
+      <div style="grid-column:1/-1">
+        <label style="display:block;font-family:var(--font-sans);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9ca3af;margin-bottom:6px">Foto de perfil (opcional)</label>
+        <input id="claim-foto" type="file" accept="image/*" style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#9ca3af;font-family:var(--font-sans);font-size:12px;padding:9px 12px" />
+      </div>
+      <div style="grid-column:1/-1">
+        <label style="display:block;font-family:var(--font-sans);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9ca3af;margin-bottom:6px">Agrupaciones en las que has salido</label>
+        <textarea id="claim-agrupaciones" placeholder="Ej: Los Reyes Magos 2019, La Guarida 2022, ... (una por línea)" rows="3" style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:white;font-family:var(--font-sans);font-size:13px;padding:9px 12px;outline:none;resize:vertical"></textarea>
+      </div>
+      <div style="grid-column:1/-1">
+        <label style="display:block;font-family:var(--font-sans);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9ca3af;margin-bottom:6px">Mensaje (opcional)</label>
+        <textarea id="claim-mensaje" placeholder="Cuéntanos algo más si lo deseas…" rows="2" style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:white;font-family:var(--font-sans);font-size:13px;padding:9px 12px;outline:none;resize:vertical"></textarea>
+      </div>
+    </div>
+
+    <div id="claim-error" style="display:none;background:rgba(249,22,105,.12);border:1px solid rgba(249,22,105,.3);border-radius:8px;padding:10px 14px;font-family:var(--font-sans);font-size:13px;color:#f91669;margin-bottom:14px"></div>
+    <div id="claim-success" style="display:none;background:rgba(72,187,117,.12);border:1px solid rgba(72,187,117,.3);border-radius:8px;padding:10px 14px;font-family:var(--font-sans);font-size:13px;color:#48bb75;margin-bottom:14px"></div>
+
+    <button id="claim-submit" style="width:100%;background:linear-gradient(135deg,var(--blue),#1a6fe8);border:none;border-radius:10px;color:white;font-family:var(--font-sans);font-size:14px;font-weight:700;padding:12px;cursor:pointer;transition:opacity .2s">Enviar solicitud</button>
+  </div>
+</div>
 
 <div id="footer-placeholder"></div>
 
 <script src="js/data.js"></script>
 <script src="js/app.js"></script>
-<script>
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+const SUPA_URL = document.querySelector('meta[name="supa-url"]')?.content || '';
+const SUPA_KEY = document.querySelector('meta[name="supa-key"]')?.content || '';
+
+// Read from env via data.js globals if available
+const supaUrl = (typeof SUPABASE_URL !== 'undefined' ? SUPABASE_URL : null)
+  || 'https://mlhcetkaiidwjfmmzpmj.supabase.co';
+const supaKey = (typeof SUPABASE_ANON_KEY !== 'undefined' ? SUPABASE_ANON_KEY : null)
+  || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1saGNldGthaWlkd2pmbW16cG1qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1Nzc1NDcsImV4cCI6MjA5NDE1MzU0N30.-NONc0cweym8cNqvSfZt2JQUyrDSLdMz9OMZL2q-ork';
+
+const sb = createClient(supaUrl, supaKey);
+
+function slugify(s) {
+  return (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+}
+
 (function () {
   'use strict';
 
@@ -173,11 +254,116 @@
     if (statTotal) statTotal.textContent = allComponentes.length || '—';
     if (!allComponentes.length) { noDataState.hidden = false; if(countEl) countEl.textContent = ''; }
     else { noDataState.hidden = true; renderGrid(); }
+
+    // Populate existing componentes select for "Soy yo" flow
+    const sel = document.getElementById('claim-existing-select');
+    if (sel && allComponentes.length) {
+      allComponentes.forEach(function(c) {
+        const opt = document.createElement('option');
+        opt.value = c.slug || slugify(c.nombre || c.name || '');
+        opt.textContent = c.nombre || c.name || '';
+        sel.appendChild(opt);
+      });
+    }
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
 }());
+
+// Modal logic
+const modal = document.getElementById('claim-modal');
+let claimMode = 'new'; // 'new' | 'existing'
+
+function openModal(mode) {
+  claimMode = mode;
+  const existingRow = document.getElementById('claim-existing-row');
+  const title = document.getElementById('claim-modal-title');
+  if (mode === 'existing') {
+    existingRow.style.display = 'block';
+    title.textContent = 'Soy yo — reclamar perfil';
+  } else {
+    existingRow.style.display = 'none';
+    title.textContent = 'Apuntarme como componente';
+  }
+  document.getElementById('claim-error').style.display = 'none';
+  document.getElementById('claim-success').style.display = 'none';
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  modal.style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+document.getElementById('btn-apuntarme').addEventListener('click', () => openModal('new'));
+document.getElementById('btn-soy-yo').addEventListener('click', () => openModal('existing'));
+document.getElementById('claim-close').addEventListener('click', closeModal);
+modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+
+document.getElementById('claim-submit').addEventListener('click', async () => {
+  const nombre = document.getElementById('claim-nombre').value.trim();
+  const email = document.getElementById('claim-email').value.trim();
+  const mensaje = document.getElementById('claim-mensaje').value.trim();
+  const agrupacionesText = document.getElementById('claim-agrupaciones').value.trim();
+  const fotoFile = document.getElementById('claim-foto').files[0];
+  const existingSlug = claimMode === 'existing' ? document.getElementById('claim-existing-select').value : '';
+  const errEl = document.getElementById('claim-error');
+  const okEl = document.getElementById('claim-success');
+  const btn = document.getElementById('claim-submit');
+
+  errEl.style.display = 'none';
+  if (!nombre) { errEl.textContent = 'El nombre es obligatorio.'; errEl.style.display = 'block'; return; }
+  if (!email || !email.includes('@')) { errEl.textContent = 'Introduce un correo válido.'; errEl.style.display = 'block'; return; }
+  if (claimMode === 'existing' && !existingSlug) { errEl.textContent = 'Selecciona tu nombre en el listado.'; errEl.style.display = 'block'; return; }
+
+  btn.disabled = true;
+  btn.textContent = 'Enviando…';
+
+  let foto_url = '', foto_storage_path = '';
+  if (fotoFile) {
+    const ext = fotoFile.name.split('.').pop();
+    const path = `componentes/claims/${slugify(nombre)}-${Date.now()}.${ext}`;
+    const { error: upErr } = await sb.storage.from('fotos').upload(path, fotoFile, { contentType: fotoFile.type });
+    if (!upErr) {
+      const { data: urlD } = sb.storage.from('fotos').getPublicUrl(path);
+      foto_url = urlD.publicUrl;
+      foto_storage_path = path;
+    }
+  }
+
+  const agrupacionesExtra = agrupacionesText
+    ? JSON.stringify(agrupacionesText.split('\n').map(s => s.trim()).filter(Boolean))
+    : '[]';
+
+  const payload = {
+    nombre,
+    slug: slugify(nombre),
+    email,
+    mensaje,
+    foto_url,
+    foto_storage_path,
+    agrupaciones_extra: agrupacionesExtra,
+    status: 'pending',
+    componente_slug_ref: existingSlug
+  };
+
+  const { error } = await sb.from('componente_claims').insert(payload);
+  btn.disabled = false;
+  btn.textContent = 'Enviar solicitud';
+
+  if (error) { errEl.textContent = 'Error al enviar: ' + error.message; errEl.style.display = 'block'; return; }
+
+  okEl.textContent = '¡Solicitud enviada! El equipo la revisará antes de publicarla. Gracias.';
+  okEl.style.display = 'block';
+  document.getElementById('claim-nombre').value = '';
+  document.getElementById('claim-email').value = '';
+  document.getElementById('claim-mensaje').value = '';
+  document.getElementById('claim-agrupaciones').value = '';
+  document.getElementById('claim-foto').value = '';
+  setTimeout(closeModal, 3000);
+});
 </script>
 </body>
 </html>

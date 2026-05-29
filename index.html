@@ -242,9 +242,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     typeof loadPortadas === 'function' ? loadPortadas() : Promise.resolve()
   ]);
 
-  // Agrupaciones
+  // Agrupaciones — random selection on each visit
+  function shuffled(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
   const destacadas = db.agrupaciones.filter(a => a.destacada);
-  const toShow = destacadas.length >= 3 ? destacadas.slice(0, 6) : db.agrupaciones.slice(0, 6);
+  const pool = destacadas.length >= 3 ? destacadas : db.agrupaciones;
+  const toShow = shuffled(pool).slice(0, 6);
   const agContainer = document.getElementById('agrupaciones-destacadas');
   if (agContainer) {
     agContainer.innerHTML = toShow.length

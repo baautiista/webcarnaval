@@ -267,7 +267,7 @@
     const stars = avg ? Math.round(parseFloat(avg)) : 0;
     const starsHtml = Array.from({length:10}, (_,i) => {
       const filled = i < stars;
-      return `<span style="color:${filled?'#fcbd0d':'rgba(255,255,255,0.15)'};font-size:18px;cursor:pointer;transition:color .15s" class="rating-star" data-val="${i+1}">★</span>`;
+      return `<span style="color:${filled?'#fcbd0d':'#d1d5db'};font-size:22px;cursor:pointer;transition:color .15s;line-height:1" class="rating-star" data-val="${i+1}" title="${i+1}/10">★</span>`;
     }).join('');
     return `
       <div class="detail-section" id="rating-section">
@@ -293,7 +293,7 @@
       <div class="detail-section">
         ${sectionTitle('Letras')}
         <p style="font-family:var(--font-body);font-size:17px;color:var(--text-secondary);margin-bottom:20px;line-height:1.7">
-          Accede al cancionero completo de esta agrupación: presentación, pasodobles, cuplés y más.
+          Accede al libreto completo de esta agrupación: presentación, pasodobles, cuplés y más.
         </p>
         <a href="letras.html?id=${esc(ag.id)}&nombre=${encodeURIComponent(ag.nombre)}" class="btn btn-primary">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
@@ -302,16 +302,13 @@
       </div>`;
   }
 
-  /* ---- Render fototeca section (CSV + Supabase fotos) ---- */
+  /* ---- Render fototeca section (Supabase fotos matching agrupacion_id) ---- */
   function renderFototeca(ag, supaFotos) {
-    // Merge CSV URLs + Supabase foto objects; deduplicate by URL
+    // Show only Supabase photos that belong to this specific agrupacion
     const seen = new Set();
     const allUrls = [];
     (supaFotos || []).forEach(f => {
       if (f.url && !seen.has(f.url)) { seen.add(f.url); allUrls.push(f.url); }
-    });
-    (ag.fotografias || []).forEach(url => {
-      if (url && !seen.has(url)) { seen.add(url); allUrls.push(url); }
     });
     if (!allUrls.length) return '';
     const PREVIEW = 8;
@@ -413,15 +410,22 @@
 
   /* ---- Render relacionadas section ---- */
   async function renderRelacionadas(ag) {
-    const yearMin = ag.anyoNum - 2;
-    const yearMax = ag.anyoNum + 2;
     const db = await DataAPI.getAll();
-    const relacionadas = db.agrupaciones.filter(a =>
-      a.id !== ag.id &&
-      a.municipio === ag.municipio &&
-      a.anyoNum >= yearMin &&
-      a.anyoNum <= yearMax
-    ).slice(0, 6);
+    const agAutores = new Set((ag.autores || []).map(n => n.toLowerCase().trim()));
+    // Same autor (any overlap) or same year
+    const scored = db.agrupaciones
+      .filter(a => a.id !== ag.id)
+      .map(a => {
+        let score = 0;
+        const aAutores = (a.autores || []).map(n => n.toLowerCase().trim());
+        if (aAutores.some(n => agAutores.has(n))) score += 3;
+        if (a.anyoNum === ag.anyoNum) score += 2;
+        else if (Math.abs(a.anyoNum - ag.anyoNum) <= 1) score += 1;
+        return { ag: a, score };
+      })
+      .filter(x => x.score > 0)
+      .sort((a, b) => b.score - a.score);
+    const relacionadas = scored.slice(0, 6).map(x => x.ag);
 
     if (!relacionadas.length) return '';
 
@@ -624,7 +628,7 @@
       const starEls = starsContainer.querySelectorAll('.rating-star');
       function updateStarColors(upTo) {
         starEls.forEach((s, i) => {
-          s.style.color = i < upTo ? '#fcbd0d' : 'rgba(255,255,255,0.15)';
+          s.style.color = i < upTo ? '#fcbd0d' : '#d1d5db';
         });
       }
       starEls.forEach(s => {
@@ -633,21 +637,28 @@
         s.addEventListener('click', async () => {
           const puntuacion = parseInt(s.dataset.val);
           const fb = document.getElementById('rating-feedback');
-          if (fb) fb.textContent = 'Guardando…';
+          if (fb) { fb.textContent = 'Guardando…'; fb.style.color = 'var(--text-muted)'; }
           try {
             const r = await fetch(`${SUPA_URL}/rest/v1/valoraciones`, {
               method: 'POST',
-              headers: { apikey: SUPA_KEY, Authorization: 'Bearer ' + SUPA_KEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+              headers: {
+                apikey: SUPA_KEY,
+                Authorization: 'Bearer ' + SUPA_KEY,
+                'Content-Type': 'application/json',
+                Prefer: 'return=minimal'
+              },
               body: JSON.stringify({ agrupacion_id: ag.id, agrupacion_nombre: ag.nombre, puntuacion })
             });
-            if (r.ok || r.status === 201) {
+            if (r.status === 201 || r.status === 200) {
               updateStarColors(puntuacion);
-              if (fb) fb.textContent = `Valoraste con ${puntuacion}/10. ¡Gracias!`;
+              if (fb) { fb.textContent = `Has valorado con ${puntuacion}/10. ¡Gracias!`; fb.style.color = '#49bb76'; }
             } else {
-              if (fb) fb.textContent = 'Error al guardar la valoración.';
+              const errText = await r.text().catch(() => '');
+              console.error('Valoracion error', r.status, errText);
+              if (fb) { fb.textContent = 'No se pudo guardar. Inténtalo de nuevo.'; fb.style.color = '#f91669'; }
             }
           } catch(e) {
-            if (fb) fb.textContent = 'Error de conexión.';
+            if (fb) { fb.textContent = 'Error de conexión.'; fb.style.color = '#f91669'; }
           }
         });
       });
