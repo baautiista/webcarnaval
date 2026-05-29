@@ -126,7 +126,7 @@ function buildPeopleIndex(agrupaciones, field, aliasMap = new Map()) {
 /* ---- Build municipios index ---- */
 function buildMunicipiosIndex(agrupaciones) {
   const MUNICIPIOS_DATA = {
-    'la linea': {
+    'la linea de la concepcion': {
       nombre: 'La Línea de la Concepción',
       slug: 'lalinea',
       historia: 'La Línea de la Concepción es una ciudad fronteriza con Gibraltar con una rica tradición carnavalesca, influenciada por las culturas atlántica y mediterránea. Su carnaval se celebra con gran fervor popular.',
@@ -176,10 +176,19 @@ function buildMunicipiosIndex(agrupaciones) {
     }
   };
 
+  // Alias short forms to canonical keys
+  const MUN_ALIASES = {
+    'la linea': 'la linea de la concepcion',
+    'linea': 'la linea de la concepcion',
+    'jimena de la frontera': 'jimena',
+    'castellar de la frontera': 'castellar',
+  };
+
   const map = new Map();
   agrupaciones.forEach(ag => {
     if (!ag.municipio) return;
-    const key = ag.municipio.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    let key = ag.municipio.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+    key = MUN_ALIASES[key] || key;
     if (!map.has(key)) {
       const base = MUNICIPIOS_DATA[key] || {
         nombre: ag.municipio,

@@ -235,9 +235,18 @@
       transform: translateX(4px);
       box-shadow: var(--shadow-md);
     }
-    @media (max-width: 560px) {
-      .timeline-card { grid-template-columns: 1fr; }
-      .timeline-card__year { font-size: 13px; }
+    @media (max-width: 600px) {
+      .timeline-card {
+        grid-template-columns: auto 1fr;
+        padding: 14px 16px;
+        gap: 12px;
+      }
+      .timeline-card__year { font-size: 16px; }
+      .timeline-card__name { font-size: 15px; }
+      .timeline-card__arrow { display: none; }
+      .autor-hero__inner { gap: 24px; }
+      .autor-hero__avatar { width: 100px; height: 100px; }
+      .autor-hero__stat-val { font-size: 24px; }
     }
     .timeline-card__year {
       font-family: var(--font-sans);
@@ -252,9 +261,9 @@
       font-size: 18px;
       font-weight: 700;
       color: var(--text-primary);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      white-space: normal;
+      overflow-wrap: break-word;
+      word-break: break-word;
       margin-bottom: 4px;
     }
     .timeline-card__meta {

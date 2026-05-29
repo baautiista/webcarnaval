@@ -252,19 +252,32 @@ document.addEventListener('DOMContentLoaded', async () => {
       : '<div class="empty-state" style="grid-column:1/-1"><p class="empty-state-title">Archivo en construccion</p><p class="empty-state-desc">Los datos se estan procesando.</p></div>';
   }
 
-  // Municipios
+  // Municipios — merge Supabase extras (photos/colors) same as municipios.html
   const munContainer = document.getElementById('municipios-grid');
   if (munContainer) {
-    munContainer.innerHTML = db.municipios.slice(0, 8).map(m => `
-      <div class="municipio-card" onclick="location.href='municipio.html?slug=${m.slug}'">
-        <div class="municipio-card-bg"><img src="${m.imagen}" alt="${m.nombre}" loading="lazy" onerror="this.style.display='none'"></div>
-        <div class="municipio-card-overlay"></div>
-        <div class="municipio-card-content">
-          <div class="municipio-card-name">${m.nombre}</div>
-          <div class="municipio-card-count">${m.agrupaciones.length} agrupaciones</div>
-        </div>
-      </div>
-    `).join('');
+    let munExtras = [];
+    try {
+      const SUPA_URL = 'https://mlhcetkaiidwjfmmzpmj.supabase.co';
+      const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1saGNldGthaWlkd2pmbW16cG1qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1Nzc1NDcsImV4cCI6MjA5NDE1MzU0N30.-NONc0cweym8cNqvSfZt2JQUyrDSLdMz9OMZL2q-ork';
+      const r = await fetch(`${SUPA_URL}/rest/v1/municipios_extra?select=slug,foto_url,color`, { headers: { apikey: SUPA_KEY, Authorization: 'Bearer ' + SUPA_KEY } });
+      if (r.ok) munExtras = await r.json();
+    } catch(e) {}
+    const extraBySlug = new Map(munExtras.map(e => [e.slug, e]));
+    munContainer.innerHTML = db.municipios.map(m => {
+      const ex = extraBySlug.get(m.slug);
+      const img = (ex && ex.foto_url) ? ex.foto_url : m.imagen;
+      const color = (ex && ex.color) ? ex.color : (typeof municipioColor === 'function' ? municipioColor(m.nombre) : '#3986ff');
+      const count = m.agrupaciones.length;
+      return `
+        <div class="municipio-card" onclick="location.href='municipio.html?slug=${m.slug}'" style="cursor:pointer">
+          <div class="municipio-card-bg"><img src="${img}" alt="${m.nombre}" loading="lazy" onerror="this.style.display='none'"></div>
+          <div class="municipio-card-overlay"></div>
+          <div class="municipio-card-content">
+            <div class="municipio-card-name">${m.nombre}</div>
+            <div class="municipio-card-count">${count} agrupaci${count===1?'ón':'ones'}</div>
+          </div>
+        </div>`;
+    }).join('');
   }
 
   // Timeline preview

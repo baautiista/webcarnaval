@@ -2718,3 +2718,81 @@ body.lightbox-open { overflow: hidden; }
   .btn { padding: 12px 20px; font-size: 13px; }
   .hero-actions { flex-direction: column; }
 }
+
+/* ============================================================
+   MOBILE IMPROVEMENTS
+   ============================================================ */
+
+/* Cards grid — single column on very small screens */
+@media (max-width: 480px) {
+  .cards-grid { grid-template-columns: 1fr; gap: 16px; }
+  .cards-grid-sm { grid-template-columns: 1fr; gap: 14px; }
+  .cards-grid-4 { grid-template-columns: 1fr; gap: 14px; }
+  .people-grid-v2 { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .gallery-grid-v2 { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+}
+
+/* Card name — allow wrap on mobile */
+@media (max-width: 600px) {
+  .card-title {
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+}
+
+/* Filter bar — stack on mobile */
+@media (max-width: 600px) {
+  .filter-bar-v2__inner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+  .filter-bar-v2__search { min-width: 0; }
+  .filter-bar-v2__selects { flex-wrap: wrap; gap: 6px; }
+  .filter-select-wrap { flex: 1; min-width: calc(50% - 3px); }
+  .filter-bar-v2__select { width: 100%; font-size: 13px; }
+  .filter-bar-v2__count { text-align: center; }
+}
+
+/* Detail page — sidebar below content on mobile */
+@media (max-width: 900px) {
+  .detail-grid { flex-direction: column; }
+  .detail-body { min-width: 0; }
+  .detail-sidebar { width: 100%; }
+}
+
+/* Agrupacion hero meta — wrap on mobile */
+@media (max-width: 600px) {
+  .detail-meta-row { gap: 10px; flex-wrap: wrap; }
+  .detail-title { font-size: clamp(26px, 8vw, 48px); }
+  .detail-section { margin-bottom: 32px; }
+}
+
+/* Page hero stats — smaller on mobile */
+@media (max-width: 480px) {
+  .page-hero-v2__stats { gap: 20px; }
+  .page-hero-v2__stat-val { font-size: 28px; }
+  .page-hero-v2__title { font-size: clamp(28px, 9vw, 56px); }
+  .page-hero-v2__subtitle { font-size: 15px; }
+}
+
+/* Navbar mobile menu touch targets */
+@media (max-width: 768px) {
+  .nav-mobile a { padding: 13px 24px; font-size: 16px; }
+}
+
+/* Sidebar cards mobile */
+@media (max-width: 600px) {
+  .sidebar-card { padding: 16px; }
+  .sidebar-person { padding: 10px 12px; }
+}
+
+/* Municipios grid homepage */
+@media (max-width: 480px) {
+  .municipios-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .municipio-card-name { font-size: 13px; }
+  .municipio-card-count { font-size: 11px; }
+}
