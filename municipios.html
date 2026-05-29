@@ -42,20 +42,7 @@
   <section class="section section-dark">
     <div class="container">
 
-      <div id="loading-state" class="loading-v2">
-        <div class="loading-v2__dots"><span></span><span></span><span></span></div>
-        <span>Cargando municipios…</span>
-      </div>
-
-      <div id="municipios-grid" class="municipios-grid-v2" role="list" aria-label="Municipios del Campo de Gibraltar" hidden></div>
-
-      <div id="empty-state" class="empty-v2" hidden>
-        <div class="empty-v2__icon">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        </div>
-        <p class="empty-v2__title">No se pudieron cargar los municipios</p>
-        <p class="empty-v2__desc">Por favor, inténtalo de nuevo más tarde.</p>
-      </div>
+      <div id="municipios-grid" class="municipios-grid-v2" role="list" aria-label="Municipios del Campo de Gibraltar"></div>
 
     </div>
   </section>
@@ -98,8 +85,6 @@
   const ACCENT_COLORS = ['--blue','--pink','--yellow','--green','--orange','--blue','--pink','--yellow'];
 
   const grid         = document.getElementById('municipios-grid');
-  const loadingState = document.getElementById('loading-state');
-  const emptyState   = document.getElementById('empty-state');
   const statsEl      = document.getElementById('comarca-stats');
   const statAg       = document.getElementById('stat-agrupaciones');
 
@@ -142,8 +127,6 @@
   }
 
   function renderGrid(municipios) {
-    loadingState.hidden = true;
-    grid.hidden = false;
     grid.innerHTML = '';
     municipios.forEach((m, i) => grid.appendChild(buildCard(m, i)));
   }
@@ -194,9 +177,7 @@
   }
 
   function showEmpty() {
-    loadingState.hidden = true;
-    grid.hidden = true;
-    emptyState.hidden = false;
+    grid.innerHTML = '';
   }
 
   function slugify(str) {

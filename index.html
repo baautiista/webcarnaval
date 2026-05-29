@@ -256,9 +256,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const toShow = shuffled(pool).slice(0, 6);
   const agContainer = document.getElementById('agrupaciones-destacadas');
   if (agContainer) {
-    agContainer.innerHTML = toShow.length
-      ? toShow.map(ag => renderAgrupacionCard(ag)).join('')
-      : '<div class="empty-state" style="grid-column:1/-1"><p class="empty-state-title">Archivo en construccion</p><p class="empty-state-desc">Los datos se estan procesando.</p></div>';
+    agContainer.innerHTML = toShow.map(ag => renderAgrupacionCard(ag)).join('');
   }
 
   // Municipios — merge Supabase extras (photos/colors) same as municipios.html
