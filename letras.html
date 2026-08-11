@@ -9,7 +9,7 @@
   <style>
     .letras-hero {
       padding: 100px 0 56px;
-      background: linear-gradient(160deg, var(--white) 0%, #eef3ff 100%);
+      background: #eef3ff;
       border-bottom: 1px solid var(--border);
     }
     .letras-hero__breadcrumb {
@@ -198,12 +198,6 @@
       <div class="letras-list" id="letras-list"></div>
     </div>
 
-    <div id="empty-state" class="letras-empty" hidden>
-      <svg class="letras-empty__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-      <p class="letras-empty__title">Sin letras registradas</p>
-      <p class="letras-empty__desc">Esta agrupación aún no tiene letras en el archivo.</p>
-      <div style="margin-top:24px"><a id="back-link" href="agrupaciones.html" class="btn btn-outline">Volver a la agrupación</a></div>
-    </div>
 
   </div>
 </main>
@@ -232,7 +226,7 @@
   function hide(id) { const el = document.getElementById(id); if (el) el.hidden = true; }
 
   async function loadLetras() {
-    if (!agId) { hide('loading-state'); show('empty-state'); return; }
+    if (!agId) { hide('loading-state'); return; }
 
     // Set hero
     const heroTitle = document.getElementById('hero-title');
@@ -256,7 +250,7 @@
 
     hide('loading-state');
 
-    if (!allLetras.length) { show('empty-state'); return; }
+    if (!allLetras.length) { hide('content'); return; }
 
     if (heroSub) heroSub.textContent = `${allLetras.length} letra${allLetras.length !== 1 ? 's' : ''} en el cancionero`;
 

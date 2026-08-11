@@ -125,37 +125,6 @@
 
 <style>
 @keyframes spin { to { transform: rotate(360deg); } }
-.empty-state {
-  grid-column: 1 / -1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 80px 24px;
-  text-align: center;
-  gap: 16px;
-}
-.empty-state-icon {
-  width: 72px; height: 72px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.04);
-  display: flex; align-items: center; justify-content: center;
-  color: var(--gray2);
-  margin-bottom: 8px;
-}
-.empty-state-title {
-  font-family: var(--font-display);
-  font-size: 22px;
-  font-weight: 700;
-  margin-bottom: 8px;
-}
-.empty-state-desc {
-  font-family: var(--font-body);
-  font-size: 16px;
-  color: var(--gray4);
-  max-width: 400px;
-  font-style: italic;
-}
 </style>
 
 <script src="js/data.js"></script>
@@ -212,20 +181,12 @@
 
     // Update count
     elResultsCount.innerHTML = total === 0
-      ? 'Sin resultados'
+      ? ''
       : `<strong>${total.toLocaleString('es-ES')}</strong> agrupacion${total !== 1 ? 'es' : ''} encontrada${total !== 1 ? 's' : ''}`;
 
     // Render cards or empty state
     if (total === 0) {
-      elList.innerHTML = `
-        <div class="empty-state">
-          <div class="empty-state-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="36" height="36"><path stroke-linecap="round" stroke-linejoin="round" d="M15.182 15.182a4.5 4.5 0 01-6.364 0M21 12a9 9 0 11-18 0 9 9 0 0118 0zM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75zm-.375 0h.008v.015h-.008V9.75zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75zm-.375 0h.008v.015h-.008V9.75z"/></svg>
-          </div>
-          <p class="empty-state-title">No se encontraron agrupaciones</p>
-          <p class="empty-state-desc">Prueba a cambiar los filtros o a ampliar la busqueda.</p>
-          <button class="btn btn-secondary btn-sm" onclick="resetFilters()">Limpiar filtros</button>
-        </div>`;
+      elList.innerHTML = '';
       elLoadMoreWrap.style.display = 'none';
       return;
     }

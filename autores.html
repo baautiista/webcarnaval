@@ -56,14 +56,7 @@
     <div class="container">
       <div id="autores-grid" class="people-grid-v2" role="list"></div>
 
-      <div id="empty-state" class="empty-v2" hidden>
-        <div class="empty-v2__icon">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        </div>
-        <p class="empty-v2__title">Sin resultados</p>
-        <p class="empty-v2__desc">No se encontró ningún autor que coincida con "<strong id="empty-query"></strong>".</p>
-        <button class="btn btn-outline" id="empty-clear">Limpiar búsqueda</button>
-      </div>
+
 
     </div>
   </section>
@@ -84,9 +77,6 @@
   var searchInput = document.getElementById('search-autores');
   var clearBtn    = document.getElementById('search-clear');
   var countEl     = document.getElementById('results-count');
-  var emptyState  = document.getElementById('empty-state');
-  var emptyQuery  = document.getElementById('empty-query');
-  var emptyClear  = document.getElementById('empty-clear');
   var statTotal   = document.getElementById('stat-total');
 
   function normalise(str) {
@@ -104,11 +94,6 @@
     if (!grid) return;
     grid.innerHTML = '';
     var hasQuery = searchQuery.length > 0;
-    emptyState.hidden = !(hasQuery && filteredAutores.length === 0);
-    if (hasQuery && filteredAutores.length === 0) {
-      emptyQuery.textContent = searchQuery;
-      return;
-    }
     filteredAutores.forEach(function(p) {
       var html = renderPersonCard(p, 'autor');
       if (html) { grid.insertAdjacentHTML('beforeend', html); }
@@ -142,7 +127,6 @@
   }
 
   if (clearBtn) clearBtn.addEventListener('click', clearSearch);
-  if (emptyClear) emptyClear.addEventListener('click', clearSearch);
 
   document.addEventListener('keydown', function(e) {
     if (e.key === '/' && document.activeElement !== searchInput) { e.preventDefault(); if(searchInput) searchInput.focus(); }

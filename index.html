@@ -295,7 +295,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const cnt = db.agrupaciones.filter(a => a.decada === dec).length;
       return `<a href="cronologia.html#d${dec}" class="card" style="text-decoration:none">
         <div class="card-body" style="text-align:center;padding:32px 20px">
-          <div style="font-family:var(--font-display);font-size:48px;font-weight:900;background:linear-gradient(135deg,var(--blue),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px">${dec}s</div>
+          <div style="font-family:var(--font-display);font-size:48px;font-weight:900;color:var(--blue);margin-bottom:8px">${dec}s</div>
           <div style="font-family:var(--font-sans);font-size:13px;color:var(--gray3)">${cnt} agrupaciones</div>
         </div>
       </a>`;

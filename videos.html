@@ -75,15 +75,6 @@
     <div class="container">
       <div id="videos-container" class="video-grid-v2" role="list" aria-label="Galería de vídeos"></div>
 
-      <div id="empty-state" class="empty-v2" hidden>
-        <div class="empty-v2__icon">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
-        </div>
-        <p class="empty-v2__title">Sin vídeos</p>
-        <p class="empty-v2__desc">No hay vídeos que coincidan con los filtros actuales.</p>
-        <button class="btn btn-outline" id="empty-clear-btn">Ver todos los vídeos</button>
-      </div>
-
       <div id="loading-state" class="loading-v2">
         <div class="loading-v2__dots"><span></span><span></span><span></span></div>
         <span>Cargando vídeos…</span>
@@ -104,7 +95,6 @@
   let allVideos = [], filtered = [];
 
   const videosEl       = document.getElementById('videos-container');
-  const emptyState     = document.getElementById('empty-state');
   const loadingState   = document.getElementById('loading-state');
   const resultsCount   = document.getElementById('results-count');
   const statTotal      = document.getElementById('stat-total');
@@ -113,7 +103,6 @@
   const añoSelect      = document.getElementById('año-select');
   const tipoSelect     = document.getElementById('tipo-select');
   const clearBtn       = document.getElementById('clear-filters-btn');
-  const emptyClearBtn  = document.getElementById('empty-clear-btn');
 
   document.addEventListener('DOMContentLoaded', async () => {
     if (typeof initPage === 'function') initPage();
@@ -151,7 +140,6 @@
     añoSelect.addEventListener('change', applyFilters);
     tipoSelect.addEventListener('change', applyFilters);
     clearBtn.addEventListener('click', clearFilters);
-    emptyClearBtn.addEventListener('click', clearFilters);
   }
 
   function clearFilters() {
@@ -269,7 +257,7 @@
   }
 
   function showLoading(show) { loadingState.hidden = !show; }
-  function showEmpty(show) { emptyState.hidden = !show; videosEl.hidden = show; }
+  function showEmpty(show) { videosEl.hidden = show; }
   function esc(str) { return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 }());
 </script>

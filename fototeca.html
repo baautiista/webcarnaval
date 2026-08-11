@@ -68,15 +68,6 @@
     <div class="container">
       <div id="gallery-container" class="gallery-grid-v2" role="list" aria-label="Galería de fotografías"></div>
 
-      <div id="empty-state" class="empty-v2" hidden>
-        <div class="empty-v2__icon">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-        </div>
-        <p class="empty-v2__title">Sin fotografías</p>
-        <p class="empty-v2__desc">No hay fotografías que coincidan con los filtros actuales.</p>
-        <button class="btn btn-outline" id="empty-clear-btn">Ver todas las fotografías</button>
-      </div>
-
       <div id="loading-state" class="loading-v2">
         <div class="loading-v2__dots"><span></span><span></span><span></span></div>
         <span>Cargando fotografías…</span>
@@ -124,9 +115,7 @@
     if (el) el.hidden = !show;
   }
   function showEmpty(show) {
-    const emptyState = document.getElementById('empty-state');
     const galleryEl  = document.getElementById('gallery-container');
-    if (emptyState) emptyState.hidden = !show;
     if (galleryEl)  galleryEl.hidden  = show;
   }
 
@@ -296,18 +285,12 @@
       const añoSelect       = document.getElementById('año-select');
       const agrupacionSelect= document.getElementById('agrupacion-select');
       const clearBtn        = document.getElementById('clear-filters-btn');
-      const emptyClearBtn   = document.getElementById('empty-clear-btn');
       let timer;
       if (searchInput)      searchInput.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(applyFilters, 280); });
       if (municipioSelect)  municipioSelect.addEventListener('change', applyFilters);
       if (añoSelect)        añoSelect.addEventListener('change', applyFilters);
       if (agrupacionSelect) agrupacionSelect.addEventListener('change', applyFilters);
       if (clearBtn)         clearBtn.addEventListener('click', () => {
-        if(searchInput) searchInput.value=''; if(municipioSelect) municipioSelect.value='';
-        if(añoSelect) añoSelect.value=''; if(agrupacionSelect) agrupacionSelect.value='';
-        applyFilters();
-      });
-      if (emptyClearBtn) emptyClearBtn.addEventListener('click', () => {
         if(searchInput) searchInput.value=''; if(municipioSelect) municipioSelect.value='';
         if(añoSelect) añoSelect.value=''; if(agrupacionSelect) agrupacionSelect.value='';
         applyFilters();
